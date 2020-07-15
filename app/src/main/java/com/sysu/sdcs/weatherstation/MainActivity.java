@@ -26,9 +26,12 @@ import com.heweather.plugin.view.VerticalView;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
+import java.util.List;
+
 import interfaces.heweather.com.interfacesmodule.bean.base.Code;
 import interfaces.heweather.com.interfacesmodule.bean.base.Lang;
 import interfaces.heweather.com.interfacesmodule.bean.base.Unit;
+import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean;
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherNowBean;
 import interfaces.heweather.com.interfacesmodule.view.HeConfig;
 import interfaces.heweather.com.interfacesmodule.view.HeWeather;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
     private TextView temperature;
     private TextView weather1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //edited by hyj
@@ -236,71 +240,70 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             return true;
         } else if (msg.what == 0) {
             Log.d(TAG, nowBaseBean.getTemp() + "C");
-            cityname = findViewById(R.id.location);
-            cityname.setText(nowBaseBean.getTemp() + "℃");
+            Log.d(TAG, nowBaseBean.getTemp() + "C");
+
+            temperature = findViewById(R.id.temperature);
+            temperature.setText(nowBaseBean.getTemp() + "℃");
+
+            weather1 = findViewById(R.id.weather1);
+            int cloud = Integer.parseInt(nowBaseBean.getCloud());
+            double rain = Double.parseDouble(nowBaseBean.getPrecip());
+            String cloudL = cloudLevel(cloud);
+            String rainL = rainLevel(rain);
+            String weatherL = "";
+            if (rainL.equals("晴")) {
+                weatherL = cloudL;
+            } else {
+                weatherL = rainL;
+            }
+            weather1.setText(weatherL);
+
+            ImageView weatherPic = findViewById(R.id.weatherpic);
+            switch (weatherL) {
+                case "小雨":
+                    weatherPic.setBackground(getResources().getDrawable(R.drawable.w_smallrain));
+                case "中雨":
+                    weatherPic.setBackground(getResources().getDrawable(R.drawable.w_middlerain));
+                case "大雨":
+                    weatherPic.setBackground(getResources().getDrawable(R.drawable.w_heavyrain));
+                    break;
+                case "暴雨":
+                    weatherPic.setBackground(getResources().getDrawable(R.drawable.w_rainstorm));
+                    break;
+                case "阴":
+                    weatherPic.setBackground(getResources().getDrawable(R.drawable.w_cloudy));
+                    break;
+                case "多云":
+                    weatherPic.setBackground(getResources().getDrawable(R.drawable.w_cloud));
+                    break;
+                case "晴":
+                default:
+                    weatherPic.setBackground(getResources().getDrawable(R.drawable.w_sunny));
+                    break;
+            }
+            weatherPic.setBackground(getResources().getDrawable(R.drawable.w_sunny));
             return true;
         } else return false;
-        Log.d(TAG, nowBaseBean.getTemp()+"C");
-
-        temperature = findViewById(R.id.temperature);
-        temperature.setText(nowBaseBean.getTemp() + "℃");
-
-        weather1 = findViewById(R.id.weather1);
-        int cloud = Integer.parseInt(nowBaseBean.getCloud());
-        double rain = Double.parseDouble(nowBaseBean.getPrecip());
-        String cloudL = cloudLevel(cloud);
-        String rainL = rainLevel(rain);
-        String weatherL = "";
-        if(rainL.equals("晴")){
-            weatherL=cloudL;
-        }else{
-            weatherL=rainL;
-        }
-        weather1.setText(weatherL);
-
-        ImageView weatherPic = findViewById(R.id.weatherpic);
-        switch (weatherL){
-            case "小雨":
-                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_smallrain));
-            case "中雨":
-                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_middlerain));
-            case "大雨":
-                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_heavyrain));
-                break;
-            case "暴雨":
-                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_rainstorm));
-                break;
-            case "阴":
-                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_cloudy));
-                break;
-            case "多云":
-                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_cloud));
-                break;
-            case "晴":
-            default:
-                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_sunny));
-                break;
-        }
-        weatherPic.setBackground(getResources().getDrawable(R.drawable.w_sunny));
-        return true;
     }
-    public String cloudLevel(Integer cloud){
-        if (cloud<=30)
+
+    public String cloudLevel(Integer cloud) {
+        if (cloud <= 30)
             return "晴";
-        else if (cloud<=60)
+        else if (cloud <= 60)
             return "多云";
-        else if (cloud<=100)
+        else if (cloud <= 100)
             return "阴";
         return "阴转多云";
     }
-    public String rainLevel(Double rain){
-        if (rain<=5)
+
+    public String rainLevel(Double rain) {
+        if (rain <= 5)
             return "晴";
-        else if(rain<=30)
+        else if (rain <= 30)
             return "小雨";
-        else if(rain<=60)
+        else if (rain <= 60)
             return "中雨";
-        else if(rain<=90)
+        else if (rain <= 90)
             return "暴雨";
         return "特大暴雨";
     }
