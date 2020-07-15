@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,13 +26,9 @@ import com.heweather.plugin.view.VerticalView;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import interfaces.heweather.com.interfacesmodule.bean.base.Code;
 import interfaces.heweather.com.interfacesmodule.bean.base.Lang;
 import interfaces.heweather.com.interfacesmodule.bean.base.Unit;
-import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean;
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherNowBean;
 import interfaces.heweather.com.interfacesmodule.view.HeConfig;
 import interfaces.heweather.com.interfacesmodule.view.HeWeather;
@@ -49,8 +46,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private Cities cities;
     final private Handler handler = new Handler(this);
 
-    private TextView cityname;
-
+    private TextView temperature;
+    private TextView weather1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //edited by hyj
@@ -81,7 +78,9 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherBean));
                 //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
                 if (Code.OK.getCode().equalsIgnoreCase(weatherBean.getCode())) {
+                    Log.d(TAG, "msg");
                     nowBaseBean = weatherBean.getNow();
+                    Log.d(TAG, new Gson().toJson(nowBaseBean));
                     handler.sendEmptyMessage(0);
                 } else {
                     //在此查看返回数据失败的原因
@@ -91,6 +90,46 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 }
             }
         });
+//        HeWeather.getWeatherNow(MainActivity.this
+//                , "CN1010100", Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherNowListener() {
+//                    @Override
+//                    public void onError(Throwable throwable) {
+//                        Log.i(TAG, "onError:", throwable);
+//                        System.out.println("Weather Now Error:" + new Gson());
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(WeatherNowBean weatherNowBean) {
+//                        Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherNowBean));
+//                        if (Code.OK.getCode().equalsIgnoreCase(weatherNowBean.getCode())) {
+//                            nowBaseBean = weatherNowBean.getNow();
+//                            Log.d(TAG, "msg");
+//                            handler.sendEmptyMessage(0);
+//                            /* now 的使用方法
+//                            属性	说明	示例值
+//                            getObsTime	实况观测时间	2013-12-30 13:14
+//                            getFeelsLike	体感温度，默认单位：摄氏度	23
+//                            getTemp	温度，默认单位：摄氏度	21
+//                            getIcon	实况天气状况代码	100
+//                            getText	实况天气状况代码	晴
+//                            getWind360	风向360角度	305
+//                            getWindDir	风向	西北
+//                            getWindScale	风力	3-4
+//                            getWindSpeed	风速，公里/小时	15
+//                            getHumidity	相对湿度	40
+//                            getPrecip	降水量	0
+//                            getPressure	大气压强	1020
+//                            getVis	能见度，默认单位：公里	10
+//                            getCloud	云量	23
+//                            getDew	实况云量	23
+//                            */
+//                        } else {
+//                            String status = weatherNowBean.getCode();
+//                            Code code = Code.toEnum(status);
+//                            Log.i("error: ", "failed code " + code);
+//                        }
+//                    }
+//                });
 
         HeWeather.getWeather15D(MainActivity.this, "CN101010100", Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherDailyListener() {
             @Override
@@ -185,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
     void unitTest() {
         System.out.println("code of gz: " + cities.getCode("广州"));//TEST1
-        NetUtils.sendInfo("https://devapi.heweather.net/v7/weather/now?location=101010100&key=ff91402a13b144cf8ec6829df147c84f");
+        //NetUtils.sendInfo("https://devapi.heweather.net/v7/weather/now?location=101010100&key=ff91402a13b144cf8ec6829df147c84f");
         //getWeatherInfo("CN"+cities.getCode(curCity));//TEST2
     }
 
@@ -201,5 +240,68 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             cityname.setText(nowBaseBean.getTemp() + "℃");
             return true;
         } else return false;
+        Log.d(TAG, nowBaseBean.getTemp()+"C");
+
+        temperature = findViewById(R.id.temperature);
+        temperature.setText(nowBaseBean.getTemp() + "℃");
+
+        weather1 = findViewById(R.id.weather1);
+        int cloud = Integer.parseInt(nowBaseBean.getCloud());
+        double rain = Double.parseDouble(nowBaseBean.getPrecip());
+        String cloudL = cloudLevel(cloud);
+        String rainL = rainLevel(rain);
+        String weatherL = "";
+        if(rainL.equals("晴")){
+            weatherL=cloudL;
+        }else{
+            weatherL=rainL;
+        }
+        weather1.setText(weatherL);
+
+        ImageView weatherPic = findViewById(R.id.weatherpic);
+        switch (weatherL){
+            case "小雨":
+                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_smallrain));
+            case "中雨":
+                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_middlerain));
+            case "大雨":
+                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_heavyrain));
+                break;
+            case "暴雨":
+                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_rainstorm));
+                break;
+            case "阴":
+                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_cloudy));
+                break;
+            case "多云":
+                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_cloud));
+                break;
+            case "晴":
+            default:
+                weatherPic.setBackground(getResources().getDrawable(R.drawable.w_sunny));
+                break;
+        }
+        weatherPic.setBackground(getResources().getDrawable(R.drawable.w_sunny));
+        return true;
+    }
+    public String cloudLevel(Integer cloud){
+        if (cloud<=30)
+            return "晴";
+        else if (cloud<=60)
+            return "多云";
+        else if (cloud<=100)
+            return "阴";
+        return "阴转多云";
+    }
+    public String rainLevel(Double rain){
+        if (rain<=5)
+            return "晴";
+        else if(rain<=30)
+            return "小雨";
+        else if(rain<=60)
+            return "中雨";
+        else if(rain<=90)
+            return "暴雨";
+        return "特大暴雨";
     }
 }
