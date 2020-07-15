@@ -18,6 +18,7 @@ public class NetUtils {
 
         void onError(Exception e);
     }
+
     public static void sendHttpRequest(final String address,
                                        final HttpCallbackListener listener) {
         new Thread(new Runnable() {
@@ -60,16 +61,18 @@ public class NetUtils {
             }
         }).start();
     }
-    public static JSONObject sendInfo(String addr){
+
+    public static JSONObject sendInfo(String addr) {
         sendHttpRequest(addr, new HttpCallbackListener() {
             @Override
             public JSONObject onFinish(String response) throws JSONException {
-                Log.d("net","receive msg"+response);
+                Log.d("net", "receive msg" + response);
                 return new JSONObject(response);
             }
+
             @Override
             public void onError(Exception e) {
-                Log.d("net","network error ",e);
+                Log.d("net", "network error ", e);
             }
         });
         return new JSONObject();

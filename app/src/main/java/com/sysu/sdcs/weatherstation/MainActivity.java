@@ -25,9 +25,13 @@ import com.heweather.plugin.view.VerticalView;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import interfaces.heweather.com.interfacesmodule.bean.base.Code;
 import interfaces.heweather.com.interfacesmodule.bean.base.Lang;
 import interfaces.heweather.com.interfacesmodule.bean.base.Unit;
+import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean;
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherNowBean;
 import interfaces.heweather.com.interfacesmodule.view.HeConfig;
 import interfaces.heweather.com.interfacesmodule.view.HeWeather;
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private VerticalView verticalView;
     private RightLargeView rightLargeView;
     private WeatherNowBean.NowBaseBean nowBaseBean;
+    private List<WeatherDailyBean.DailyBean> _15DBean;
     private Cities cities;
     final private Handler handler = new Handler(this);
 
@@ -76,9 +81,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherBean));
                 //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
                 if (Code.OK.getCode().equalsIgnoreCase(weatherBean.getCode())) {
-                    Log.d(TAG, "msg");
                     nowBaseBean = weatherBean.getNow();
-                    Log.d(TAG, new Gson().toJson(nowBaseBean));
                     handler.sendEmptyMessage(0);
                 } else {
                     //在此查看返回数据失败的原因
@@ -88,49 +91,31 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 }
             }
         });
-//        HeWeather.getWeatherNow(MainActivity.this
-//                , "CN1010100", Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherNowListener() {
-//                    @Override
-//                    public void onError(Throwable throwable) {
-//                        Log.i(TAG, "onError:", throwable);
-//                        System.out.println("Weather Now Error:" + new Gson());
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(WeatherNowBean weatherNowBean) {
-//                        Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherNowBean));
-//                        if (Code.OK.getCode().equalsIgnoreCase(weatherNowBean.getCode())) {
-//                            nowBaseBean = weatherNowBean.getNow();
-//                            Log.d(TAG, "msg");
-//                            handler.sendEmptyMessage(0);
-//                            /* now 的使用方法
-//                            属性	说明	示例值
-//                            getObsTime	实况观测时间	2013-12-30 13:14
-//                            getFeelsLike	体感温度，默认单位：摄氏度	23
-//                            getTemp	温度，默认单位：摄氏度	21
-//                            getIcon	实况天气状况代码	100
-//                            getText	实况天气状况代码	晴
-//                            getWind360	风向360角度	305
-//                            getWindDir	风向	西北
-//                            getWindScale	风力	3-4
-//                            getWindSpeed	风速，公里/小时	15
-//                            getHumidity	相对湿度	40
-//                            getPrecip	降水量	0
-//                            getPressure	大气压强	1020
-//                            getVis	能见度，默认单位：公里	10
-//                            getCloud	云量	23
-//                            getDew	实况云量	23
-//                            */
-//                        } else {
-//                            String status = weatherNowBean.getCode();
-//                            Code code = Code.toEnum(status);
-//                            Log.i("error: ", "failed code " + code);
-//                        }
-//                    }
-//                });
 
+        HeWeather.getWeather15D(MainActivity.this, "CN101010100", Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherDailyListener() {
+            @Override
+            public void onError(Throwable throwable) {
+                Log.i(TAG, "getWeather onError: " + throwable);
+            }
 
-        unitTest();
+            @Override
+            public void onSuccess(WeatherDailyBean weatherDailyBean) {
+                Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherDailyBean));
+                //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
+                if (Code.OK.getCode().equalsIgnoreCase(weatherDailyBean.getCode())) {
+                    Log.d(TAG, "msg");
+                    _15DBean = weatherDailyBean.getDaily();
+                    Log.d(TAG, new Gson().toJson(nowBaseBean));
+                    handler.sendEmptyMessage(15);
+                } else {
+                    //在此查看返回数据失败的原因
+                    String status = weatherDailyBean.getCode();
+                    Code code = Code.toEnum(status);
+                    Log.i(TAG, "failed code: " + code);
+                }
+            }
+        });
+//        unitTest();
         BottomBar bottomBar = findViewById(R.id.bottomBar);//底部导航栏的使用方法见 https://github.com/roughike/BottomBar
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
@@ -206,9 +191,15 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
     @Override
     public boolean handleMessage(@NonNull Message msg) {
-        Log.d(TAG, nowBaseBean.getTemp()+"C");
-        cityname = findViewById(R.id.location);
-        cityname.setText(nowBaseBean.getTemp() + "℃");
-        return true;
+        if (msg.what == 15) {
+            Log.d(TAG, "15d");
+            Log.d(TAG, new Gson().toJson(_15DBean));
+            return true;
+        } else if (msg.what == 0) {
+            Log.d(TAG, nowBaseBean.getTemp() + "C");
+            cityname = findViewById(R.id.location);
+            cityname.setText(nowBaseBean.getTemp() + "℃");
+            return true;
+        } else return false;
     }
 }
