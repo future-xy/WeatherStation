@@ -1,0 +1,17 @@
+<tabs>
+    <tab
+        id="@+id/tab_home"
+        icon="@drawable/ic_home"
+        title="Home"
+        barColorWhenSelected="#DDDDDD"/>
+    <tab
+        id="@+id/tab_map"
+        icon="@drawable/ic_map"
+        title="Cloud Map"
+        barColorWhenSelected="#22B8DD"/>
+    <tab
+        id="@+id/tab_setting"
+        icon="@drawable/ic_setting"
+        title="Setting"
+        barColorWhenSelected="#FF9900"/>
+</tabs>
