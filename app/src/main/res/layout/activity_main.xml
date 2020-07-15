@@ -10,31 +10,45 @@
         android:layout_height="wrap_content">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingTop="30dp"
+            android:paddingHorizontal="20dp">
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
                 android:textSize="80sp"
-                android:id="@+id/location"
-                android:paddingTop="30dp"
-                android:paddingHorizontal="20dp"
-                android:text=""
+                android:id="@+id/temperature"
+
+                android:text="32℃"
                 />
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="160sp"
                 android:layout_height="wrap_content"
-                android:textSize="40sp"
-                android:id="@+id/location2"
-                android:layout_below="@+id/location"
-                android:text=""
+                android:textSize="30sp"
+                android:id="@+id/weather1"
+                android:gravity="end"
+                android:layout_below="@+id/temperature"
+                android:text="阴"
                 />
+
+            <ImageView
+                android:id="@+id/weatherpic"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginVertical="50dp"
+                android:layout_toEndOf="@+id/weather1"
+                android:background="@drawable/w_heavyrain"
+                android:contentDescription="天气"
+                android:paddingStart="50dp" />
         </RelativeLayout>
     </ScrollView>
 
     <FrameLayout
         android:id="@+id/contentContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/bottomBar" />
 
     <com.roughike.bottombar.BottomBar
@@ -44,4 +58,4 @@
         android:layout_alignParentBottom="true"
         app:bb_tabXmlResource="@xml/bottombar_tabs"/>
 
-</RelativeLayout>
+></RelativeLayout>
