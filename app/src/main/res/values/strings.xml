@@ -12,4 +12,11 @@
     <string name="sport">Sport</string>
     <string name="ultraviolet_level">Ultraviolet</string>
     <string name="load_weather_info_fail">Load weaher info failed!</string>
+
+    <string name="cloud_graph">卫星云图</string>
+    <string name="true_color">真彩色</string>
+    <string name="ultra_red">红外</string>
+    <string name="vis_color">可见光</string>
+    <string name="steam">水汽</string>
+    <string name="play">播放卫星云图</string>
 </resources>
