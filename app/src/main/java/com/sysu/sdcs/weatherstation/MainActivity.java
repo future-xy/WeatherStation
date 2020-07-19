@@ -54,7 +54,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
     private TextView temperature;
     private TextView weather1;
-
+    private TextView windDirection;
+    private TextView relativeHumility;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //edited by hyj
@@ -255,11 +256,13 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             return true;
         } else if (msg.what == 0) {
             Log.d(TAG, nowBaseBean.getTemp() + "C");
-            Log.d(TAG, nowBaseBean.getTemp() + "C");
-
+            //即时温度
             temperature = findViewById(R.id.temperature);
-            temperature.setText(nowBaseBean.getTemp() + "℃");
-
+            temperature.setText(String.format("%s℃", nowBaseBean.getTemp()));
+            //温度范围
+            windDirection = findViewById(R.id.wind_direction);
+            windDirection.setText(String.format("%s级%s", nowBaseBean.getWindScale(), nowBaseBean.getWindDir()));
+            //天气(晴雨)
             weather1 = findViewById(R.id.weather1);
             int cloud = Integer.parseInt(nowBaseBean.getCloud());
             double rain = Double.parseDouble(nowBaseBean.getPrecip());
@@ -272,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 weatherL = rainL;
             }
             weather1.setText(weatherL);
-
             ImageView weatherPic = findViewById(R.id.weatherpic);
             switch (weatherL) {
                 case "小雨":
@@ -297,11 +299,16 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                     break;
             }
             weatherPic.setBackground(getResources().getDrawable(R.drawable.w_sunny));
+            // 相对湿度
+
+            relativeHumility = findViewById(R.id.relative_humility);
+            relativeHumility.setText(String.format("相对湿度%s%%", nowBaseBean.getHumidity()));
+
             return true;
         } else return false;
     }
 
-    public String cloudLevel(Integer cloud) {
+    private String cloudLevel(Integer cloud) {
         if (cloud <= 30)
             return "晴";
         else if (cloud <= 60)
@@ -310,8 +317,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             return "阴";
         return "阴转多云";
     }
-
-    public String rainLevel(Double rain) {
+    private String rainLevel(Double rain) {
         if (rain <= 5)
             return "晴";
         else if (rain <= 30)

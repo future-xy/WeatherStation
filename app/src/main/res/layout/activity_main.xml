@@ -1,58 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp"
-            android:paddingTop="30dp">
+            android:paddingTop="30dp"
+            android:paddingHorizontal="20dp">
 
-            <TextView
-                android:id="@+id/temperature"
-                android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:text="32℃"
-                android:textSize="80sp" />
 
-            <TextView
-                android:id="@+id/weather1"
-                android:layout_width="160sp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/temperature"
-                android:gravity="end"
-                android:text="阴"
-                android:textSize="30sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
+                    android:textSize="80sp"
+                    android:id="@+id/temperature"
+                    android:gravity="center"
+                    android:text="稍等"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30sp"
+                    android:id="@+id/weather1"
+                    android:gravity="end"
+                    android:layout_below="@+id/temperature"
+                    android:text="天气数据正在路上"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/wind_direction"
+                    android:layout_toEndOf="@+id/weather1"
+                    android:layout_below="@+id/temperature"
+                    android:textSize="30sp"
+                    android:text=""
+                    android:paddingHorizontal="20dp">
+
+                </TextView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relative_humility"
+                    android:layout_toEndOf="@+id/wind_direction"
+                    android:layout_below="@+id/weatherpic"
+                    android:textSize="30sp"
+                    android:text="">
+                </TextView>
+
 
             <ImageView
                 android:id="@+id/weatherpic"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginVertical="50dp"
+                android:layout_height="130dp"
                 android:layout_marginStart="40dp"
                 android:layout_marginEnd="10dp"
-                android:layout_toEndOf="@+id/weather1"
-                android:background="@drawable/w_heavyrain"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@+id/temperature"
+                android:background="@drawable/loading_icon"
                 android:contentDescription="天气"
                 android:paddingStart="50dp" />
-
-
-            <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/weather1"
-                android:layout_alignStart="@id/weather1"
-                android:layout_marginTop="100dp"
-                android:text="Cloud Map" />
         </RelativeLayout>
     </ScrollView>
 
@@ -67,7 +79,6 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        app:bb_tabXmlResource="@xml/bottombar_tabs" />
+        app:bb_tabXmlResource="@xml/bottombar_tabs"/>
 
-
-</RelativeLayout>
+></RelativeLayout>
