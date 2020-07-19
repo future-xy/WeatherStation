@@ -71,14 +71,14 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         */
 
         //测试云图button，正式版删掉
-        Button button = findViewById(R.id.button);
-        button.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CloudGraphActivity.class);
-                startActivity(intent);
-            }
-        });
+//        Button button = findViewById(R.id.button);
+//        button.setOnClickListener(new Button.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, CloudGraphActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
 
         cities = new Cities();
@@ -185,6 +185,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                         break;
                     case R.id.tab_map:
                         Log.d("nav", "to page map");
+                        Intent intent = new Intent(MainActivity.this, CloudGraphActivity.class);
+                        startActivity(intent);
                         break;
                     case R.id.tab_setting:
                         Log.d("nav", "to page setting");
@@ -302,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             // 相对湿度
 
             relativeHumility = findViewById(R.id.relative_humility);
-            relativeHumility.setText(String.format("相对湿度%s%%", nowBaseBean.getHumidity()));
+            relativeHumility.setText(String.format("湿度%s%%", nowBaseBean.getHumidity()));
 
             return true;
         } else return false;

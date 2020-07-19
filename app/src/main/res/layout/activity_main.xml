@@ -26,45 +26,51 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="30sp"
+                    android:textSize="20sp"
                     android:id="@+id/weather1"
                     android:gravity="end"
-                    android:layout_below="@+id/temperature"
-                    android:text="天气数据正在路上"
+                    android:layout_toEndOf="@id/temperature"
+                    android:layout_above="@id/wind_direction"
+                    android:text=""
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/wind_direction"
-                    android:layout_toEndOf="@+id/weather1"
                     android:layout_below="@+id/temperature"
-                    android:textSize="30sp"
-                    android:text=""
-                    android:paddingHorizontal="20dp">
+                    android:textSize="20sp"
+                    android:text="天气数据正在路上"
+                    android:paddingHorizontal="40dp"
+                    android:paddingTop="20dp">
 
                 </TextView>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/relative_humility"
-                    android:layout_toEndOf="@+id/wind_direction"
-                    android:layout_below="@+id/weatherpic"
-                    android:textSize="30sp"
-                    android:text="">
-                </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/relative_humility"
+                android:layout_below="@+id/weatherpic"
+                android:layout_alignParentEnd="true"
+                android:gravity="end"
+                android:paddingEnd="50dp"
+                android:paddingTop="20dp"
+                android:textSize="20sp"
+                android:text="" />
 
 
             <ImageView
                 android:id="@+id/weatherpic"
                 android:layout_width="match_parent"
-                android:layout_height="130dp"
+                android:layout_height="150dp"
                 android:layout_marginStart="40dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="0dp"
                 android:layout_toEndOf="@+id/temperature"
                 android:background="@drawable/loading_icon"
                 android:contentDescription="天气"
                 android:paddingStart="50dp" />
+
+
         </RelativeLayout>
     </ScrollView>
 
