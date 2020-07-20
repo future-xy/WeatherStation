@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         data = new ArrayList<>();
 //        data.add(24);
 //        data.add(18);
-        data.add(22);
+        data.add(24);
 //        data.add(19);
         data.add(23);
         data.add(24);

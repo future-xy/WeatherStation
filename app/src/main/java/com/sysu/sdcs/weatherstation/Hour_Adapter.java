@@ -25,8 +25,8 @@ public class Hour_Adapter extends RecyclerView.Adapter<Hour_Adapter.Hour_Holder>
         this.data.addAll(data);
         //将不规则的数据组从小到大排序
 //        Collections.sort(this.data);
-        minValue = this.data.get(0);
-        maxValue = this.data.get(data.size() - 1);
+        minValue = Collections.min(data);
+        maxValue = Collections.max(data);
         mContext = context;
     }
 

@@ -96,7 +96,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/hourly"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="250dp"
                 android:layout_below="@+id/wind_direction" />
 
 
