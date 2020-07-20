@@ -15,6 +15,7 @@ public class TemperatureView extends View {
     private int minValue;
     private int maxValue;
     private int currentValue;
+    private String currentDay;
     private int lastValue;
     private int nextValue;
     private Paint mPaint = new Paint();
@@ -49,6 +50,11 @@ public class TemperatureView extends View {
     //设置最大值
     public void setMaxValue(int maxValue) {
         this.maxValue = maxValue;
+    }
+
+    //设置当前日期
+    public void setCurrentDay(String currentDay) {
+        this.currentDay = currentDay;
     }
 
     //设置目前的值
@@ -99,6 +105,17 @@ public class TemperatureView extends View {
         drawGraph(canvas);
         drawValue(canvas);
         drawPoint(canvas);
+        drawDay(canvas);
+    }
+
+    //还可以添加一堆东西，比如：天气图标，风速，，，
+    //绘制日期
+    private void drawDay(Canvas canvas) {
+        mPaint.setTextSize(50);
+        mPaint.setStrokeWidth(0);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(currentDay, pointX, 50, mPaint);
     }
 
     //绘制数值
@@ -111,18 +128,6 @@ public class TemperatureView extends View {
         canvas.drawText(currentValue + "°", pointX, pointY - 20, mPaint);
     }
 
-    //设置字体颜色
-    public void setTextColor() {
-        if (currentValue <= 10 && currentValue >= 0) {
-            mPaint.setColor(Color.BLUE);
-        } else if (currentValue <= 20 && currentValue > 10) {
-            mPaint.setColor(Color.GREEN);
-        } else if (currentValue <= 30 && currentValue > 20) {
-            mPaint.setColor(0xFFFF8000);
-        } else if (currentValue <= 40 && currentValue > 30) {
-            mPaint.setColor(Color.RED);
-        }
-    }
 
     //绘制温度点
     public void drawPoint(Canvas canvas) {
@@ -155,6 +160,20 @@ public class TemperatureView extends View {
             float middleValue = currentValue - (currentValue - nextValue) / 2f;
             float middleY = mMiddleValue + (int) ((pointBottomY - pointTopY) * 1f / (maxValue - minValue) * ((maxValue + minValue) / 2 - middleValue));
             canvas.drawLine(pointX, pointY, viewWidth, middleY, mPaint);
+        }
+    }
+
+
+    //设置字体颜色
+    public void setTextColor() {
+        if (currentValue <= 10 && currentValue >= 0) {
+            mPaint.setColor(Color.BLUE);
+        } else if (currentValue <= 20 && currentValue > 10) {
+            mPaint.setColor(Color.GREEN);
+        } else if (currentValue <= 30 && currentValue > 20) {
+            mPaint.setColor(0xFFFF8000);
+        } else if (currentValue <= 40 && currentValue > 30) {
+            mPaint.setColor(Color.RED);
         }
     }
 }

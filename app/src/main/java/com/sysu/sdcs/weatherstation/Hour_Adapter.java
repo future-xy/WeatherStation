@@ -17,14 +17,14 @@ public class Hour_Adapter extends RecyclerView.Adapter<Hour_Adapter.Hour_Holder>
 
     private static final String TAG = "Hour_Adapter";
     private Context mContext;
-    private List<Integer> data = new ArrayList<>();
+    private List<Integer> data;
+    private List<String> days;
     private int minValue;
     private int maxValue;
 
-    public Hour_Adapter(Context context, List<Integer> data) {
-        this.data.addAll(data);
-        //将不规则的数据组从小到大排序
-//        Collections.sort(this.data);
+    public Hour_Adapter(Context context, List<Integer> data, List<String> days) {
+        this.data = data;
+        this.days = days;
         minValue = Collections.min(data);
         maxValue = Collections.max(data);
         mContext = context;
@@ -61,6 +61,7 @@ public class Hour_Adapter extends RecyclerView.Adapter<Hour_Adapter.Hour_Holder>
         }
 
         hour_holder.mTemperatureView.setCurrentValue(data.get(i));
+        hour_holder.mTemperatureView.setCurrentDay(days.get(i));
 
     }
 
