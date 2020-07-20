@@ -165,14 +165,14 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         //从上到下更新控件
         //更新控件必须在成功get之后
         data = new ArrayList<>();
-        data.add(24);
-        data.add(18);
+//        data.add(24);
+//        data.add(18);
         data.add(22);
-        data.add(19);
+//        data.add(19);
         data.add(23);
         data.add(24);
-        data.add(26);
-        data.add(28);
+//        data.add(26);
+//        data.add(28);
         Hour_Adapter adapter = new Hour_Adapter(this, data);
         recyclerView.setAdapter(adapter);
     }

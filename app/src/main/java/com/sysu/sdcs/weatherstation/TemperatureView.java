@@ -17,7 +17,7 @@ public class TemperatureView extends View {
     private int currentValue;
     private int lastValue;
     private int nextValue;
-    private Paint mPaint;
+    private Paint mPaint = new Paint();
     private int viewHeight;
     private int viewWidth;
     private int pointX;
@@ -96,7 +96,6 @@ public class TemperatureView extends View {
         pointY = mMiddleValue + (int) ((pointBottomY - pointTopY) * 1f / (maxValue - minValue) * ((maxValue + minValue) / 2 - currentValue));
 
         Log.d(TAG, "onDraw: " + pointY);
-        mPaint = new Paint();
         drawGraph(canvas);
         drawValue(canvas);
         drawPoint(canvas);
