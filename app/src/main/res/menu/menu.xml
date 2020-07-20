@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_cloud"
+        android:icon="@drawable/ic_map2"
+        android:title="卫星云图"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_setting2"
+        android:title="设置"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_quit"
+        android:icon="@mipmap/ic_launcher"
+        android:orderInCategory="100"
+        android:title="quit"
+        app:showAsAction="never" />
+</menu>

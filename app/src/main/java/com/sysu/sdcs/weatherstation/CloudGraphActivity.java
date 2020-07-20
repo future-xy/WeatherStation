@@ -3,6 +3,7 @@ package com.sysu.sdcs.weatherstation;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -22,6 +24,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,16 +54,19 @@ public class CloudGraphActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cloud_graph);
         Calendar calendar = Calendar.getInstance();
-        actionBar = getSupportActionBar();
-        if (actionBar == null)
-            Log.d("isNULL", "m");
-        assert actionBar != null;
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(calendar.getTime().toLocaleString() + " " + getResources().getString(R.string.cloud_graph));
-
+//        actionBar = getSupportActionBar();
+//        if (actionBar == null)
+//            Log.d("isNULL", "m");
+//        assert actionBar != null;
+//        actionBar.setDisplayShowHomeEnabled(true);
+//        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar.setDisplayShowCustomEnabled(true);
+//        actionBar.setDisplayShowTitleEnabled(true);
+//        actionBar.setTitle(calendar.getTime().toLocaleString() + " " + getResources().getString(R.string.cloud_graph));
+        Toolbar toolbar = findViewById(R.id.toolbar2);
+        toolbar.setTitle(calendar.getTime().toLocaleString() + " " + getResources().getString(R.string.cloud_graph));
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         cg_buffer = new ConcurrentHashMap<>();
         imageView = findViewById(R.id.cg_image);
         seekBar = findViewById(R.id.cg_seeker);
@@ -116,6 +122,16 @@ public class CloudGraphActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        //Log.d("tag=",""+item.getItemId());
+        if (item.getItemId() == 16908332) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void renew_urls() {

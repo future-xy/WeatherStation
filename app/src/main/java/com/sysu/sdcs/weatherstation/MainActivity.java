@@ -10,7 +10,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.heweather.plugin.view.HeContent;
@@ -29,6 +34,7 @@ import com.heweather.plugin.view.VerticalView;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import interfaces.heweather.com.interfacesmodule.bean.base.Code;
@@ -51,11 +57,12 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private List<WeatherDailyBean.DailyBean> _15DBean;
     private Cities cities;
     final private Handler handler = new Handler(this);
-
+    private RecyclerView recyclerView;
     private TextView temperature;
     private TextView weather1;
     private TextView windDirection;
     private TextView relativeHumility;
+    private List<Integer> data;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //edited by hyj
@@ -69,8 +76,12 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setTitle("天气屋");
         */
+        Toolbar mToolbar = findViewById(R.id.toolbar);
+        mToolbar.setTitle("天气屋");
+        mToolbar.setSubtitle("测试版");
+        mToolbar.inflateMenu(R.menu.menu);
+        setSupportActionBar(mToolbar);
 
-        //测试云图button，正式版删掉
 //        Button button = findViewById(R.id.button);
 //        button.setOnClickListener(new Button.OnClickListener() {
 //            @Override
@@ -79,7 +90,10 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 //                startActivity(intent);
 //            }
 //        });
-
+        recyclerView = findViewById(R.id.hourly);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(manager);
 
         cities = new Cities();
         HeWeatherConfig.init(HWKEY, curCity);//UI SDK
@@ -175,28 +189,63 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             }
         });
 //        unitTest();
-        BottomBar bottomBar = findViewById(R.id.bottomBar);//底部导航栏的使用方法见 https://github.com/roughike/BottomBar
-        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-            @Override
-            public void onTabSelected(int tabId) {
-                switch (tabId) {
-                    case R.id.tab_home:
-                        Log.d("nav", "to page home");
-                        break;
-                    case R.id.tab_map:
-                        Log.d("nav", "to page map");
-                        Intent intent = new Intent(MainActivity.this, CloudGraphActivity.class);
-                        startActivity(intent);
-                        break;
-                    case R.id.tab_setting:
-                        Log.d("nav", "to page setting");
-                        break;
-                }
-            }
-        });
+//        BottomBar bottomBar = findViewById(R.id.bottomBar);//底部导航栏的使用方法见 https://github.com/roughike/BottomBar
+//        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+//            @Override
+//            public void onTabSelected(int tabId) {
+//                switch (tabId) {
+//                    case R.id.tab_home:
+//                        Log.d("nav", "to page home");
+//                        break;
+//                    case R.id.tab_map:
+//                        Log.d("nav", "to page map");
+//                        Intent intent = new Intent(MainActivity.this, CloudGraphActivity.class);
+//                        startActivity(intent);
+//                        break;
+//                    case R.id.tab_setting:
+//                        Log.d("nav", "to page setting");
+//                        break;
+//                }
+//            }
+//        });
 
         //从上到下更新控件
         //更新控件必须在成功get之后
+        data = new ArrayList<>();
+        data.add(24);
+        data.add(18);
+        data.add(22);
+        data.add(19);
+        data.add(23);
+        data.add(24);
+        data.add(26);
+        data.add(28);
+        Hour_Adapter adapter = new Hour_Adapter(this,data);
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_cloud:
+                Log.d(TAG,"cloud");
+                Intent intent = new Intent(MainActivity.this, CloudGraphActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_settings:
+                Log.d(TAG,"setting");
+                break;
+            case R.id.action_quit:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void getWeatherInfo(String cityID) {

@@ -5,22 +5,42 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
-    <ScrollView
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:gravity="right">
+
+    </androidx.appcompat.widget.Toolbar>
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="30dp"
             android:paddingHorizontal="20dp">
 
-
+                <TextView
+                    android:id="@+id/city_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="广州"
+                    android:gravity="center"
+                    android:textSize="25sp"
+                    >
+                </TextView>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="150dp"
                     android:textSize="80sp"
                     android:id="@+id/temperature"
                     android:gravity="center"
+                    android:layout_below="@+id/city_name"
                     android:text="稍等"
                     />
                 <TextView
@@ -66,25 +86,35 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="0dp"
                 android:layout_toEndOf="@+id/temperature"
+                android:layout_below="@+id/city_name"
                 android:background="@drawable/loading_icon"
                 android:contentDescription="天气"
                 android:paddingStart="50dp" />
+            <androidx.recyclerview.widget.RecyclerView
+
+                android:id="@+id/hourly"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_below="@+id/wind_direction">
+            </androidx.recyclerview.widget.RecyclerView>
 
 
         </RelativeLayout>
+
+
     </ScrollView>
+<!--    遇事不决改需求:) -->
+<!--    <FrameLayout-->
+<!--        android:id="@+id/contentContainer"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_above="@+id/bottomBar" />-->
 
-    <FrameLayout
-        android:id="@+id/contentContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/bottomBar" />
-
-    <com.roughike.bottombar.BottomBar
-        android:id="@+id/bottomBar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        app:bb_tabXmlResource="@xml/bottombar_tabs"/>
+<!--    <com.roughike.bottombar.BottomBar-->
+<!--        android:id="@+id/bottomBar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        app:bb_tabXmlResource="@xml/bottombar_tabs"/>-->
 
 ></RelativeLayout>
