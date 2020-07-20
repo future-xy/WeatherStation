@@ -10,7 +10,11 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
@@ -45,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private RightLargeView rightLargeView;
     private WeatherNowBean.NowBaseBean nowBaseBean;
     private List<DailyBean> _15DBean;
-    private Cities cities;
     final private Handler handler = new Handler(this);
     private RecyclerView recyclerView;
     private TextView temperature;
@@ -77,10 +80,30 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(manager);
 
-        cities = new Cities();
+        final Cities cities = new Cities();
         HeWeatherConfig.init(HWKEY, curCity);//UI SDK
         HeConfig.init(HWID, HWKEY);//DATA SDK
         HeConfig.switchToDevService();//没有专业版,切换到开发者模式
+
+        //切换城市
+        final String[] city_names = cities.getCitynames();
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, city_names);
+        Spinner spinner = findViewById(R.id.city_name_spinner);
+        spinner.setAdapter(arrayAdapter);
+        spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, city_names[position]);
+                getWeatherInfo(cities.getCode(city_names[position]));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                Log.d(TAG, "NOTHING!");
+            }
+        });
+
+
         getWeatherInfo("CN" + cities.getCode(curCity));//好像失灵了...
    /*   这部分代码移植到getWeatherInfo函数中了
         HeWeather.getWeatherNow(MainActivity.this, "CN101010100", Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherNowListener() {
@@ -162,12 +185,10 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_cloud:
-                Log.d(TAG, "cloud");
                 Intent intent = new Intent(MainActivity.this, CloudGraphActivity.class);
                 startActivity(intent);
                 break;
             case R.id.action_settings:
-                Log.d(TAG, "setting");
                 break;
             case R.id.action_quit:
                 finish();
@@ -191,9 +212,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherBean));
                 //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
                 if (Code.OK.getCode().equalsIgnoreCase(weatherBean.getCode())) {
-                    Log.d(TAG, "msg");
                     nowBaseBean = weatherBean.getNow();
-                    Log.d(TAG, new Gson().toJson(nowBaseBean));
                     handler.sendEmptyMessage(0);
                 } else {
                     //在此查看返回数据失败的原因
@@ -215,9 +234,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherDailyBean));
                 //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
                 if (Code.OK.getCode().equalsIgnoreCase(weatherDailyBean.getCode())) {
-                    Log.d(TAG, "msg");
                     _15DBean = weatherDailyBean.getDaily();
-                    Log.d(TAG, new Gson().toJson(nowBaseBean));
                     handler.sendEmptyMessage(15);
                 } else {
                     //在此查看返回数据失败的原因
@@ -240,8 +257,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     public boolean handleMessage(@NonNull Message msg) {
         if (msg.what == 15) {
             //15天天气在这里更新
-            Log.d(TAG, "15d");
-            Log.d(TAG, new Gson().toJson(_15DBean));
             List<Integer> data = new ArrayList<>();
             List<String> days = new ArrayList<>();
             for (DailyBean dailyBean : _15DBean) {
@@ -254,7 +269,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             return true;
         } else if (msg.what == 0) {
             //首页天气在这里更新
-            Log.d(TAG, nowBaseBean.getTemp() + "C");
             //即时温度
             temperature = findViewById(R.id.temperature);
             temperature.setText(String.format("%s℃", nowBaseBean.getTemp()));
