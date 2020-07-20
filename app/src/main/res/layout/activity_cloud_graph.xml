@@ -1,76 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
     tools:context=".CloudGraphActivity">
+
     <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/toolbar2"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        >
-    </androidx.appcompat.widget.Toolbar>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cg_select_panel"
-        android:layout_below="@+id/toolbar2"
-        app:cardElevation="20dp"
-        app:cardBackgroundColor="@color/cardview_dark_background"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar2"
+        app:cardBackgroundColor="@color/cardview_dark_background"
+        app:cardElevation="20dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <RadioGroup
+                android:id="@+id/cg_selection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
                 android:layout_marginTop="15dp"
-                android:id="@+id/cg_selection"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:orientation="horizontal">
+
                 <RadioButton
                     android:id="@+id/true_color"
-                    android:text="@string/true_color"
-                    android:textColor="@color/cardview_light_background"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
+                    android:text="@string/true_color"
+                    android:textColor="@color/cardview_light_background" />
+
                 <RadioButton
                     android:id="@+id/ultra_red"
-                    android:text="@string/ultra_red"
-                    android:textColor="@color/cardview_light_background"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
+                    android:text="@string/ultra_red"
+                    android:textColor="@color/cardview_light_background" />
+
                 <RadioButton
                     android:id="@+id/vis_color"
-                    android:text="@string/vis_color"
-                    android:textColor="@color/cardview_light_background"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
+                    android:text="@string/vis_color"
+                    android:textColor="@color/cardview_light_background" />
+
                 <RadioButton
                     android:id="@+id/steam"
-                    android:text="@string/steam"
-                    android:textColor="@color/cardview_light_background"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
+                    android:text="@string/steam"
+                    android:textColor="@color/cardview_light_background" />
             </RadioGroup>
 
             <SeekBar
-                android:layout_below="@id/cg_selection"
                 android:id="@+id/cg_seeker"
-                android:layout_marginHorizontal="15dp"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/cg_selection"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="15dp"
                 android:max="10"
                 android:progress="3" />
 
@@ -80,10 +84,10 @@
 
     <ImageView
         android:id="@+id/cg_image"
-        android:layout_below="@+id/toolbar2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:contentDescription="@string/app_name" />
+        android:layout_below="@+id/toolbar2"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY" />
 
 </RelativeLayout>

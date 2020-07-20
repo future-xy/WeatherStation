@@ -1,120 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
+
     <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/toolbar"
+        android:gravity="right"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:gravity="right">
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
     </androidx.appcompat.widget.Toolbar>
+
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="30dp"
-            android:paddingHorizontal="20dp">
-
-                <TextView
-                    android:id="@+id/city_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="广州"
-                    android:gravity="center"
-                    android:textSize="25sp"
-                    >
-                </TextView>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="150dp"
-                    android:textSize="80sp"
-                    android:id="@+id/temperature"
-                    android:gravity="center"
-                    android:layout_below="@+id/city_name"
-                    android:text="稍等"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    android:id="@+id/weather1"
-                    android:gravity="end"
-                    android:layout_toEndOf="@id/temperature"
-                    android:layout_above="@id/wind_direction"
-                    android:text=""
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/wind_direction"
-                    android:layout_below="@+id/temperature"
-                    android:textSize="20sp"
-                    android:text="天气数据正在路上"
-                    android:paddingHorizontal="40dp"
-                    android:paddingTop="20dp">
-
-                </TextView>
+            android:paddingHorizontal="20dp"
+            android:paddingTop="30dp">
 
             <TextView
+                android:id="@+id/city_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="广州"
+                android:textSize="25sp"></TextView>
+
+            <TextView
+                android:id="@+id/temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:layout_below="@+id/city_name"
+                android:gravity="center"
+                android:text="稍等"
+                android:textSize="80sp" />
+
+            <TextView
+                android:id="@+id/weather1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_above="@id/wind_direction"
+                android:layout_toEndOf="@id/temperature"
+                android:gravity="end"
+                android:text=""
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/wind_direction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/temperature"
+                android:paddingHorizontal="40dp"
+                android:paddingTop="20dp"
+                android:text="天气数据正在路上"
+                android:textSize="20sp">
+
+            </TextView>
+
+            <TextView
                 android:id="@+id/relative_humility"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/weatherpic"
                 android:layout_alignParentEnd="true"
                 android:gravity="end"
-                android:paddingEnd="50dp"
                 android:paddingTop="20dp"
-                android:textSize="20sp"
-                android:text="" />
+                android:paddingEnd="50dp"
+                android:text=""
+                android:textSize="20sp" />
 
 
             <ImageView
                 android:id="@+id/weatherpic"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="0dp"
-                android:layout_toEndOf="@+id/temperature"
                 android:layout_below="@+id/city_name"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="10dp"
+                android:layout_toEndOf="@+id/temperature"
                 android:background="@drawable/loading_icon"
                 android:contentDescription="天气"
                 android:paddingStart="50dp" />
-            <androidx.recyclerview.widget.RecyclerView
 
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/hourly"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:layout_below="@+id/wind_direction">
-            </androidx.recyclerview.widget.RecyclerView>
+                android:layout_below="@+id/wind_direction" />
 
 
         </RelativeLayout>
 
 
     </ScrollView>
-<!--    遇事不决改需求:) -->
-<!--    <FrameLayout-->
-<!--        android:id="@+id/contentContainer"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_above="@+id/bottomBar" />-->
+    <!--    遇事不决改需求:) -->
+    <!--    <FrameLayout-->
+    <!--        android:id="@+id/contentContainer"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_above="@+id/bottomBar" />-->
 
-<!--    <com.roughike.bottombar.BottomBar-->
-<!--        android:id="@+id/bottomBar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="60dp"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        app:bb_tabXmlResource="@xml/bottombar_tabs"/>-->
+    <!--    <com.roughike.bottombar.BottomBar-->
+    <!--        android:id="@+id/bottomBar"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="60dp"-->
+    <!--        android:layout_alignParentBottom="true"-->
+    <!--        app:bb_tabXmlResource="@xml/bottombar_tabs"/>-->
 
-></RelativeLayout>
+    >
+</RelativeLayout>

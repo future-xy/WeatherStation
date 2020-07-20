@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private TextView windDirection;
     private TextView relativeHumility;
     private List<Integer> data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //edited by hyj
@@ -82,14 +83,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         mToolbar.inflateMenu(R.menu.menu);
         setSupportActionBar(mToolbar);
 
-//        Button button = findViewById(R.id.button);
-//        button.setOnClickListener(new Button.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, CloudGraphActivity.class);
-//                startActivity(intent);
-//            }
-//        });
         recyclerView = findViewById(R.id.hourly);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -124,46 +117,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 }
             }
         });
-//        HeWeather.getWeatherNow(MainActivity.this
-//                , "CN1010100", Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherNowListener() {
-//                    @Override
-//                    public void onError(Throwable throwable) {
-//                        Log.i(TAG, "onError:", throwable);
-//                        System.out.println("Weather Now Error:" + new Gson());
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(WeatherNowBean weatherNowBean) {
-//                        Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherNowBean));
-//                        if (Code.OK.getCode().equalsIgnoreCase(weatherNowBean.getCode())) {
-//                            nowBaseBean = weatherNowBean.getNow();
-//                            Log.d(TAG, "msg");
-//                            handler.sendEmptyMessage(0);
-//                            /* now 的使用方法
-//                            属性	说明	示例值
-//                            getObsTime	实况观测时间	2013-12-30 13:14
-//                            getFeelsLike	体感温度，默认单位：摄氏度	23
-//                            getTemp	温度，默认单位：摄氏度	21
-//                            getIcon	实况天气状况代码	100
-//                            getText	实况天气状况代码	晴
-//                            getWind360	风向360角度	305
-//                            getWindDir	风向	西北
-//                            getWindScale	风力	3-4
-//                            getWindSpeed	风速，公里/小时	15
-//                            getHumidity	相对湿度	40
-//                            getPrecip	降水量	0
-//                            getPressure	大气压强	1020
-//                            getVis	能见度，默认单位：公里	10
-//                            getCloud	云量	23
-//                            getDew	实况云量	23
-//                            */
-//                        } else {
-//                            String status = weatherNowBean.getCode();
-//                            Code code = Code.toEnum(status);
-//                            Log.i("error: ", "failed code " + code);
-//                        }
-//                    }
-//                });
 
         HeWeather.getWeather15D(MainActivity.this, "CN101010100", Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherDailyListener() {
             @Override
@@ -220,26 +173,26 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         data.add(24);
         data.add(26);
         data.add(28);
-        Hour_Adapter adapter = new Hour_Adapter(this,data);
+        Hour_Adapter adapter = new Hour_Adapter(this, data);
         recyclerView.setAdapter(adapter);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu,menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_cloud:
-                Log.d(TAG,"cloud");
+                Log.d(TAG, "cloud");
                 Intent intent = new Intent(MainActivity.this, CloudGraphActivity.class);
                 startActivity(intent);
                 break;
             case R.id.action_settings:
-                Log.d(TAG,"setting");
+                Log.d(TAG, "setting");
                 break;
             case R.id.action_quit:
                 finish();
@@ -368,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             return "阴";
         return "阴转多云";
     }
+
     private String rainLevel(Double rain) {
         if (rain <= 5)
             return "晴";

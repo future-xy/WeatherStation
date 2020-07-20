@@ -21,19 +21,19 @@ public class Hour_Adapter extends RecyclerView.Adapter<Hour_Adapter.Hour_Holder>
     private int minValue;
     private int maxValue;
 
-    public Hour_Adapter(Context context,List<Integer> data){
+    public Hour_Adapter(Context context, List<Integer> data) {
         this.data.addAll(data);
         //将不规则的数据组从小到大排序
         Collections.sort(this.data);
         minValue = this.data.get(0);
-        maxValue = this.data.get(data.size()-1);
+        maxValue = this.data.get(data.size() - 1);
         mContext = context;
     }
 
     @NonNull
     @Override
     public Hour_Holder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.hourlyitem, viewGroup,false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.hourlyitem, viewGroup, false);
         return new Hour_Holder(view);
     }
 
@@ -41,23 +41,23 @@ public class Hour_Adapter extends RecyclerView.Adapter<Hour_Adapter.Hour_Holder>
     public void onBindViewHolder(@NonNull Hour_Holder hour_holder, int i) {
 
         //如果是第一个
-        if(i==0){
+        if (i == 0) {
             hour_holder.mTemperatureView.setDrawLeftLine(false);
         }
         //除第一个以外
-        else{
+        else {
             hour_holder.mTemperatureView.setDrawLeftLine(true);
-            hour_holder.mTemperatureView.setLastValue(data.get(i-1));
+            hour_holder.mTemperatureView.setLastValue(data.get(i - 1));
         }
 
         //如果是最后一个
-        if(i == data.size()-1){
+        if (i == data.size() - 1) {
             hour_holder.mTemperatureView.setDrawRightLine(false);
         }
         //除最后一个以外
-        else{
+        else {
             hour_holder.mTemperatureView.setDrawRightLine(true);
-            hour_holder.mTemperatureView.setNextValue(data.get(i+1));
+            hour_holder.mTemperatureView.setNextValue(data.get(i + 1));
         }
 
         hour_holder.mTemperatureView.setCurrentValue(data.get(i));
@@ -69,7 +69,7 @@ public class Hour_Adapter extends RecyclerView.Adapter<Hour_Adapter.Hour_Holder>
         return data.size();
     }
 
-    class Hour_Holder extends RecyclerView.ViewHolder{
+    class Hour_Holder extends RecyclerView.ViewHolder {
 
         private TemperatureView mTemperatureView;
 
