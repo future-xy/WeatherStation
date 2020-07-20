@@ -24,7 +24,7 @@ public class TemperatureView extends View {
     private int pointY;
     private boolean isDrawLeftLine;
     private boolean isDrawRightLine;
-    private int pointTopY = (int) (40 * Util.getDensity(getContext()));
+    private int pointTopY = (int) (80 * Util.getDensity(getContext()));
     private int pointBottomY = (int) (200 * Util.getDensity(getContext()));
     private int mMiddleValue;
 
