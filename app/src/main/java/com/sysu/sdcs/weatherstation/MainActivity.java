@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.google.gson.Gson;
 import com.heweather.plugin.view.HeWeatherConfig;
 import com.heweather.plugin.view.RightLargeView;
@@ -30,6 +31,7 @@ import com.heweather.plugin.view.VerticalView;
 import java.util.ArrayList;
 import java.util.List;
 
+import interfaces.heweather.com.interfacesmodule.bean.air.AirNowBean;
 import interfaces.heweather.com.interfacesmodule.bean.base.Code;
 import interfaces.heweather.com.interfacesmodule.bean.base.Lang;
 import interfaces.heweather.com.interfacesmodule.bean.base.Unit;
@@ -49,12 +51,18 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private RightLargeView rightLargeView;
     private WeatherNowBean.NowBaseBean nowBaseBean;
     private List<DailyBean> _15DBean;
+    private AirNowBean.NowBean nowAirBean;
     final private Handler handler = new Handler(this);
     private RecyclerView recyclerView;
     private TextView temperature;
     private TextView weather1;
     private TextView windDirection;
     private TextView relativeHumility;
+    private TextView pm25;
+    private TextView pm10;
+    private TextView so2;
+    private TextView no2;
+    private ArcProgress arcProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +83,14 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         mToolbar.inflateMenu(R.menu.menu);
         setSupportActionBar(mToolbar);
 
-        recyclerView = findViewById(R.id.hourly);
+        recyclerView = findViewById(R.id.daily);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(manager);
-
+        pm25 = findViewById(R.id.PM2_5);
+        pm10 = findViewById(R.id.PM10);
+        so2 = findViewById(R.id.SO2);
+        no2 = findViewById(R.id.NO2);
         final Cities cities = new Cities();
         HeWeatherConfig.init(HWKEY, curCity);//UI SDK
         HeConfig.init(HWID, HWKEY);//DATA SDK
@@ -102,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 Log.d(TAG, "NOTHING!");
             }
         });
-
+        arcProgress = findViewById(R.id.arc_progress);
 
         getWeatherInfo("CN" + cities.getCode(curCity));//好像失灵了...
    /*   这部分代码移植到getWeatherInfo函数中了
@@ -244,6 +255,31 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 }
             }
         });
+
+        HeWeather.getAirNow(MainActivity.this, cityID, Lang.ZH_HANS,new HeWeather.OnResultAirNowListener(){
+
+
+            @Override
+            public void onError(Throwable throwable) {
+                Log.i(TAG, "getAir onError: " + throwable);
+
+            }
+
+            @Override
+            public void onSuccess(AirNowBean airNowBean) {
+                Log.i(TAG, "getAir onSuccess: " + new Gson().toJson(airNowBean));
+                if (Code.OK.getCode().equalsIgnoreCase(airNowBean.getCode())) {
+                    nowAirBean = airNowBean.getNow();
+                    handler.sendEmptyMessage(25);
+                } else {
+                    //在此查看返回数据失败的原因
+                    String status = airNowBean.getCode();
+                    Code code = Code.toEnum(status);
+                    Log.i(TAG, "failed code: " + code);
+                }
+            }
+        });
+        arcProgress.setVisibility(View.VISIBLE);
     }
 
 
@@ -311,14 +347,26 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                     weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_sunny));
                     break;
             }
-            weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_sunny));
+            //weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_sunny));
             // 相对湿度
 
             relativeHumility = findViewById(R.id.relative_humility);
             relativeHumility.setText(String.format("湿度%s%%", nowBaseBean.getHumidity()));
 
             return true;
-        } else return false;
+        }else if(msg.what==25){
+            String unit = "μg/m³";
+            String quality = nowAirBean.getAqi();
+            arcProgress.setProgress(Integer.parseInt(quality));
+            pm25.setText(nowAirBean.getPm2p5()+unit);
+            pm10.setText(nowAirBean.getPm10()+unit);
+            so2.setText(nowAirBean.getSo2()+unit);
+            no2.setText(nowAirBean.getNo2()+unit);
+            nowAirBean.getNo2();
+            return true;
+        }
+        else
+            return false;
     }
 
     private String cloudLevel(Integer cloud) {

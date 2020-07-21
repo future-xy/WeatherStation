@@ -115,7 +115,7 @@ public class TemperatureView extends View {
         mPaint.setStrokeWidth(0);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(currentDay, pointX, 50, mPaint);
+        canvas.drawText(currentDay, pointX, 570, mPaint);
     }
 
     //绘制数值

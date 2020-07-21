@@ -44,7 +44,6 @@
                 android:id="@+id/temperature"
                 android:layout_width="wrap_content"
                 android:layout_height="150dp"
-                android:layout_below="@+id/city_name"
                 android:gravity="center"
                 android:text="稍等"
                 android:textSize="80sp" />
@@ -88,7 +87,6 @@
                 android:id="@+id/weatherpic"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:layout_below="@+id/city_name"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="10dp"
@@ -96,15 +94,104 @@
                 android:background="@drawable/loading_icon"
                 android:contentDescription="天气"
                 android:paddingStart="50dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15日天气"
+                android:layout_below="@+id/wind_direction"
+                android:textSize="20sp"
+                android:id="@+id/daily_title"
+                android:paddingTop="50dp">
 
+            </TextView>
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/hourly"
+                android:id="@+id/daily"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                android:layout_below="@+id/wind_direction"
-                android:layout_marginTop="30dp" />
+                android:layout_below="@+id/daily_title"
+                android:layout_marginTop="0dp" />
+            <TextView
+                android:id="@+id/quality_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/daily"
+                android:paddingTop="50dp"
+                android:text="空气质量"
+                android:textSize="20sp"
+                >
+            </TextView>
+            <com.github.lzyzsd.circleprogress.ArcProgress
+                android:id="@+id/arc_progress"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginTop="50dp"
+                app:arc_progress="50"
+                app:arc_max="180"
+                app:arc_bottom_text="优"
+                app:arc_bottom_text_size="30sp"
+                app:arc_suffix_text=" "
+                android:layout_below="@+id/quality_title"
+                android:visibility="invisible">
+            </com.github.lzyzsd.circleprogress.ArcProgress>
 
 
+
+                <TextView
+                    style="@style/RowItemTop"
+                    android:layout_below="@+id/quality_title"
+                    android:layout_toEndOf="@+id/arc_progress"
+                    android:id="@+id/PM2.5_title"
+                    android:text="pm2.5[入肺颗粒物]"
+                    />
+                <TextView
+                    style="@style/RowItemTopRight"
+                    android:id="@+id/PM2.5"
+                    android:layout_below="@+id/quality_title"
+                    android:layout_toEndOf="@+id/PM2.5_title"
+                    android:text="12ug/m³"
+                    />
+            <TextView
+                style="@style/RowItem"
+                android:layout_below="@+id/PM2.5_title"
+                android:layout_toEndOf="@+id/arc_progress"
+                android:id="@+id/PM10_title"
+                android:text="pm10[入肺颗粒物]"
+                />
+            <TextView
+                style="@style/RowItemRight"
+                android:id="@+id/PM10"
+                android:layout_below="@+id/PM2.5"
+                android:layout_toEndOf="@+id/PM2.5_title"
+                android:text="12ug/m³"
+                />
+            <TextView
+                style="@style/RowItem"
+                android:layout_below="@+id/PM10_title"
+                android:layout_toEndOf="@+id/arc_progress"
+                android:id="@+id/SO2_title"
+                android:text="SO2[二氧化硫]"
+                />
+            <TextView
+                style="@style/RowItemRight"
+                android:id="@+id/SO2"
+                android:layout_below="@+id/PM10"
+                android:layout_toEndOf="@+id/PM2.5_title"
+                android:text="12ug/m³"
+                />
+            <TextView
+                style="@style/RowItem"
+                android:layout_below="@+id/SO2_title"
+                android:layout_toEndOf="@+id/arc_progress"
+                android:id="@+id/NO2_title"
+                android:text="NO2[二氧化氮]"
+                />
+            <TextView
+                style="@style/RowItemRight"
+                android:id="@+id/NO2"
+                android:layout_below="@+id/SO2"
+                android:layout_toEndOf="@+id/PM2.5_title"
+                android:text="12ug/m³"
+                />
         </RelativeLayout>
 
 
