@@ -92,7 +92,6 @@ public class TemperatureView extends View {
         viewHeight = getMeasuredHeight();
         viewWidth = getMeasuredWidth();
         pointX = viewWidth / 2;
-        Log.d(TAG, "onMeasure: " + viewWidth);
     }
 
     @Override
@@ -101,7 +100,6 @@ public class TemperatureView extends View {
         mMiddleValue = (pointTopY + pointBottomY) / 2;
         pointY = mMiddleValue + (int) ((pointBottomY - pointTopY) * 1f / (maxValue - minValue) * ((maxValue + minValue) / 2 - currentValue));
 
-        Log.d(TAG, "onDraw: " + pointY);
         drawGraph(canvas);
         drawValue(canvas);
         drawPoint(canvas);

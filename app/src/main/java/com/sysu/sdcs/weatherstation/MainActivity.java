@@ -4,6 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private String curCity = "广州";//默认城市
     private VerticalView verticalView;
     private RightLargeView rightLargeView;
+    //临时存储天气
     private WeatherNowBean.NowBaseBean nowBaseBean;
     private List<DailyBean> _15DBean;
     private AirNowBean.NowBean nowAirBean;
@@ -101,12 +106,15 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         so2 = findViewById(R.id.SO2);
         no2 = findViewById(R.id.NO2);
 
+        arcProgress = findViewById(R.id.arc_progress);
+
         final Cities cities = new Cities();
         HeWeatherConfig.init(HWKEY, curCity);//UI SDK
         HeConfig.init(HWID, HWKEY);//DATA SDK
         HeConfig.switchToDevService();//没有专业版,切换到开发者模式
 
-        //切换城市
+        //通过Spinner切换城市，测试版
+        //有db之后应该从db中读取城市列表
         final String[] city_names = cities.getCitynames();
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, city_names);
         Spinner spinner = findViewById(R.id.city_name_spinner);
@@ -123,59 +131,15 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 Log.d(TAG, "NOTHING!");
             }
         });
-        arcProgress = findViewById(R.id.arc_progress);
 
-        getWeatherInfo("CN" + cities.getCode(curCity));//好像失灵了...
+        //如果有网则更新天气
+        if (networkConnected())
+            getWeatherInfo("CN" + cities.getCode(curCity));
+        else //否则从数据库读取
+            Log.d(TAG, "No Net!!!");
+
         sunriseView = findViewById(R.id.sun);
 
-   /*   这部分代码移植到getWeatherInfo函数中了
-        HeWeather.getWeatherNow(MainActivity.this, "CN101010100", Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherNowListener() {
-            @Override
-            public void onError(Throwable e) {
-                Log.i(TAG, "getWeather onError: " + e);
-            }
-
-            @Override
-            public void onSuccess(WeatherNowBean weatherBean) {
-                Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherBean));
-                //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
-                if (Code.OK.getCode().equalsIgnoreCase(weatherBean.getCode())) {
-                    Log.d(TAG, "msg");
-                    nowBaseBean = weatherBean.getNow();
-                    Log.d(TAG, new Gson().toJson(nowBaseBean));
-                    handler.sendEmptyMessage(0);
-                } else {
-                    //在此查看返回数据失败的原因
-                    String status = weatherBean.getCode();
-                    Code code = Code.toEnum(status);
-                    Log.i(TAG, "failed code: " + code);
-                }
-            }
-        });
-
-        HeWeather.getWeather15D(MainActivity.this, "CN101010100", Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherDailyListener() {
-            @Override
-            public void onError(Throwable throwable) {
-                Log.i(TAG, "getWeather onError: " + throwable);
-            }
-
-            @Override
-            public void onSuccess(WeatherDailyBean weatherDailyBean) {
-                Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherDailyBean));
-                //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
-                if (Code.OK.getCode().equalsIgnoreCase(weatherDailyBean.getCode())) {
-                    Log.d(TAG, "msg");
-                    _15DBean = weatherDailyBean.getDaily();
-                    Log.d(TAG, new Gson().toJson(nowBaseBean));
-                    handler.sendEmptyMessage(15);
-                } else {
-                    //在此查看返回数据失败的原因
-                    String status = weatherDailyBean.getCode();
-                    Code code = Code.toEnum(status);
-                    Log.i(TAG, "failed code: " + code);
-                }
-            }
-        });*/
 //        unitTest();
 //        BottomBar bottomBar = findViewById(R.id.bottomBar);//底部导航栏的使用方法见 https://github.com/roughike/BottomBar
 //        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
@@ -196,6 +160,22 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 //                }
 //            }
 //        });
+    }
+
+    //判断是否有网络连接
+    boolean networkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        if (cm == null) return false;
+        Network network = cm.getActiveNetwork();
+        if (network != null) {
+            NetworkCapabilities nc = cm.getNetworkCapabilities(network);
+            if (nc != null) {
+                if (nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return true;
+                else return nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR);
+            }
+        }
+
+        return false;
     }
 
     public void startSunAnim(int sunrise, int sunset) {
@@ -241,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         return super.onOptionsItemSelected(item);
     }
 
+    //以后在这个函数添加功能时，如果顺利获取天气就存在db中
     public void getWeatherInfo(String cityID) {
         /*
             cityID: e.g. CN1010100
@@ -257,6 +238,9 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
                 if (Code.OK.getCode().equalsIgnoreCase(weatherBean.getCode())) {
                     nowBaseBean = weatherBean.getNow();
+                    /*
+                    存到DB中
+                     */
                     handler.sendEmptyMessage(0);
                 } else {
                     //在此查看返回数据失败的原因
@@ -281,7 +265,9 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                     _15DBean = weatherDailyBean.getDaily();
                     sunriseToday = _15DBean.get(0).getSunrise();
                     sunsetToday = _15DBean.get(0).getSunset();
-
+                    /*
+                    存到DB中
+                     */
                     handler.sendEmptyMessage(15);
                 } else {
                     //在此查看返回数据失败的原因
@@ -293,12 +279,9 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         });
 
         HeWeather.getAirNow(MainActivity.this, cityID, Lang.ZH_HANS, new HeWeather.OnResultAirNowListener() {
-
-
             @Override
             public void onError(Throwable throwable) {
                 Log.i(TAG, "getAir onError: " + throwable);
-
             }
 
             @Override
@@ -306,6 +289,9 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 Log.i(TAG, "getAir onSuccess: " + new Gson().toJson(airNowBean));
                 if (Code.OK.getCode().equalsIgnoreCase(airNowBean.getCode())) {
                     nowAirBean = airNowBean.getNow();
+                                        /*
+                    存到DB中
+                     */
                     handler.sendEmptyMessage(25);
                 } else {
                     //在此查看返回数据失败的原因
@@ -326,106 +312,120 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 //        //getWeatherInfo("CN"+cities.getCode(curCity));//TEST2
 //    }
 
+    //更新15天天气
+    boolean update15Days() {
+        List<Integer> data = new ArrayList<>();
+        List<String> days = new ArrayList<>();
+        for (DailyBean dailyBean : _15DBean) {
+            data.add(Integer.valueOf(dailyBean.getTempMax()));
+            String date = dailyBean.getFxDate();
+            days.add(date.split("-", 2)[1]);
+        }
+        Hour_Adapter adapter = new Hour_Adapter(this, data, days);
+        recyclerView.setAdapter(adapter);
+
+        TextView sunriseTime = findViewById(R.id.sunrise_time);
+        TextView sunsetTime = findViewById(R.id.sunset_time);
+        sunriseTime.setText(sunriseToday);
+        sunsetTime.setText(sunsetToday);
+        startSunAnim(getHourFromTime(sunriseToday), getHourFromTime(sunsetToday));
+        return true;
+    }
+
+    //首页天气在这里更新
+    boolean updateMain() {
+        //即时温度
+        temperature = findViewById(R.id.temperature);
+        temperature.setText(String.format("%s℃", nowBaseBean.getTemp()));
+        //温度范围
+        windDirection = findViewById(R.id.wind_direction);
+        windDirection.setText(String.format("%s级%s", nowBaseBean.getWindScale(), nowBaseBean.getWindDir()));
+        //天气(晴雨)
+        weather1 = findViewById(R.id.weather1);
+        int cloud = Integer.parseInt(nowBaseBean.getCloud());
+        double rain = Double.parseDouble(nowBaseBean.getPrecip());
+        String cloudL = cloudLevel(cloud);
+        String rainL = rainLevel(rain);
+        String weatherL;
+        if (rainL.equals("晴")) {
+            weatherL = cloudL;
+        } else {
+            weatherL = rainL;
+        }
+        weather1.setText(weatherL);
+        ImageView weatherPic = findViewById(R.id.weatherpic);
+        switch (weatherL) {
+            case "小雨":
+                weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_smallrain));
+            case "中雨":
+                weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_middlerain));
+            case "大雨":
+                weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_heavyrain));
+                break;
+            case "暴雨":
+                weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_rainstorm));
+                break;
+            case "阴":
+                weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_cloudy));
+                break;
+            case "多云":
+                weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_cloud));
+                break;
+            case "晴":
+            default:
+                weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_sunny));
+                break;
+        }
+        //weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_sunny));
+        // 相对湿度
+
+        relativeHumility = findViewById(R.id.relative_humility);
+        relativeHumility.setText(String.format("湿度%s%%", nowBaseBean.getHumidity()));
+
+        return true;
+    }
+
+    //更新空气信息
+    boolean updateAir() {
+        String unit = "μg/m³";
+        int quality = Integer.parseInt(nowAirBean.getAqi());
+        String qualityDescription = "";
+        if (quality <= 50) {
+            qualityDescription = "优";
+        } else if (quality <= 100) {
+            qualityDescription = "良";
+        } else if (quality <= 150) {
+            qualityDescription = "轻度污染";
+        } else if (quality <= 200) {
+            qualityDescription = "重度污染";
+        } else {
+            qualityDescription = "严重污染";
+        }
+        arcProgress.setProgress(quality);
+        arcProgress.setBottomText(qualityDescription);
+        pm25.setText(nowAirBean.getPm2p5() + unit);
+        pm10.setText(nowAirBean.getPm10() + unit);
+        so2.setText(nowAirBean.getSo2() + unit);
+        no2.setText(nowAirBean.getNo2() + unit);
+        nowAirBean.getNo2();
+
+        return true;
+    }
+
     @Override
     public boolean handleMessage(@NonNull Message msg) {
+        //如果获取到15天天气
         if (msg.what == 15) {
-            //15天天气在这里更新
-            List<Integer> data = new ArrayList<>();
-            List<String> days = new ArrayList<>();
-            for (DailyBean dailyBean : _15DBean) {
-                data.add(Integer.valueOf(dailyBean.getTempMax()));
-                String date = dailyBean.getFxDate();
-                days.add(date.split("-", 2)[1]);
-            }
-            Hour_Adapter adapter = new Hour_Adapter(this, data, days);
-            recyclerView.setAdapter(adapter);
-
-            TextView sunriseTime = findViewById(R.id.sunrise_time);
-            TextView sunsetTime = findViewById(R.id.sunset_time);
-            sunriseTime.setText(sunriseToday);
-            sunsetTime.setText(sunsetToday);
-            startSunAnim(getHourFromTime(sunriseToday), getHourFromTime(sunsetToday));
-            return true;
+            return update15Days();
         } else if (msg.what == 0) {
-            //首页天气在这里更新
-            //即时温度
-            temperature = findViewById(R.id.temperature);
-            temperature.setText(String.format("%s℃", nowBaseBean.getTemp()));
-            //温度范围
-            windDirection = findViewById(R.id.wind_direction);
-            windDirection.setText(String.format("%s级%s", nowBaseBean.getWindScale(), nowBaseBean.getWindDir()));
-            //天气(晴雨)
-            weather1 = findViewById(R.id.weather1);
-            int cloud = Integer.parseInt(nowBaseBean.getCloud());
-            double rain = Double.parseDouble(nowBaseBean.getPrecip());
-            String cloudL = cloudLevel(cloud);
-            String rainL = rainLevel(rain);
-            String weatherL;
-            if (rainL.equals("晴")) {
-                weatherL = cloudL;
-            } else {
-                weatherL = rainL;
-            }
-            weather1.setText(weatherL);
-            ImageView weatherPic = findViewById(R.id.weatherpic);
-            switch (weatherL) {
-                case "小雨":
-                    weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_smallrain));
-                case "中雨":
-                    weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_middlerain));
-                case "大雨":
-                    weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_heavyrain));
-                    break;
-                case "暴雨":
-                    weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_rainstorm));
-                    break;
-                case "阴":
-                    weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_cloudy));
-                    break;
-                case "多云":
-                    weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_cloud));
-                    break;
-                case "晴":
-                default:
-                    weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_sunny));
-                    break;
-            }
-            //weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_sunny));
-            // 相对湿度
-
-            relativeHumility = findViewById(R.id.relative_humility);
-            relativeHumility.setText(String.format("湿度%s%%", nowBaseBean.getHumidity()));
-
-            return true;
+            //如果获取到现在天气
+            return updateMain();
         } else if (msg.what == 25) {
-            String unit = "μg/m³";
-            int quality = Integer.parseInt(nowAirBean.getAqi());
-            String qualityDescription = "";
-            if (quality <= 50) {
-                qualityDescription = "优";
-            } else if (quality <= 100) {
-                qualityDescription = "良";
-            } else if (quality <= 150) {
-                qualityDescription = "轻度污染";
-            } else if (quality <= 200) {
-                qualityDescription = "重度污染";
-            } else {
-                qualityDescription = "严重污染";
-            }
-            arcProgress.setProgress(quality);
-            arcProgress.setBottomText(qualityDescription);
-            pm25.setText(nowAirBean.getPm2p5() + unit);
-            pm10.setText(nowAirBean.getPm10() + unit);
-            so2.setText(nowAirBean.getSo2() + unit);
-            no2.setText(nowAirBean.getNo2() + unit);
-            nowAirBean.getNo2();
-
-            return true;
-        } else if (msg.what == 13) {
-            return true;
-        } else
-            return false;
+            //如果获取到空气信息
+            return updateAir();
+        } else return msg.what == 13;
     }
+
 
     private int getHourFromTime(String time) {
         String hour = time.substring(0, 2);
