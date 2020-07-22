@@ -8,8 +8,8 @@ import android.util.Log;
 class DBOpenHandler extends SQLiteOpenHelper {
     int version;
 
-    public DBOpenHandler(Context context, String name,
-                         SQLiteDatabase.CursorFactory factory, int version) {
+    public DBOpenHandler(Context context, String name, SQLiteDatabase.CursorFactory factory,
+                         int version) {
         super(context, name, factory, version);
         this.version = version;
     }

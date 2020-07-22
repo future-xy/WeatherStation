@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -264,9 +265,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                         _15DBean = weatherDailyBean.getDaily();
                         sunriseToday = _15DBean.get(0).getSunrise();
                         sunsetToday = _15DBean.get(0).getSunset();
-                    /*
-                    存到DB中
-                     */
+                        String _15DStr = new Gson().toJson(_15DBean);
+//                        db.insert("WeatherDaily",);
                         handler.sendEmptyMessage(15);
                     } else {
                         //在此查看返回数据失败的原因

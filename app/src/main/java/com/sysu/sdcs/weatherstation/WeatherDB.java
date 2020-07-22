@@ -7,37 +7,26 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 public class WeatherDB {
-    private DBOpenHandler dbOpenHandler;
+    SQLiteDatabase db;
 
     public WeatherDB(Context context) {
-        this.dbOpenHandler = new DBOpenHandler(context, "dbWeather.db3", null, 1);
+        DBOpenHandler dbOpenHandler = new DBOpenHandler(context, "dbWeather.db3", null, 1);
+        db = dbOpenHandler.getWritableDatabase();
     }
 
-    public Uri insert(Uri uri, String tableName, ContentValues cv) {
-        SQLiteDatabase db = dbOpenHandler.getWritableDatabase();
-
+    public void insert(String tableName, ContentValues cv) {
         db.insert(tableName, null, cv);
-        db.close();
-        return uri;
     }
 
-    public int update(Uri uri, String tableName, ContentValues cv, String where, String[] whereArgs) {
-        SQLiteDatabase db = dbOpenHandler.getWritableDatabase();
-        int ret = db.update(tableName, cv, where, whereArgs);
-        db.close();
-        return ret;
+    public int update(String tableName, ContentValues cv, String where, String[] whereArgs) {
+        return db.update(tableName, cv, where, whereArgs);
     }
 
-    public int delete(Uri uri, String tableName, String where, String[] whereArgs) {
-        SQLiteDatabase db = dbOpenHandler.getWritableDatabase();
-        int ret = db.delete(tableName, where, whereArgs);
-        db.close();
-        return ret;
+    public int delete(String tableName, String where, String[] whereArgs) {
+        return db.delete(tableName, where, whereArgs);
     }
 
-    public Cursor query(Uri uri, String tableName, String[] projection, String where, String[] whereArgs, String sortOrder) {
-        SQLiteDatabase db = dbOpenHandler.getWritableDatabase();
-        //        db.close();
+    public Cursor query(String tableName, String[] projection, String where, String[] whereArgs, String sortOrder) {
         return db.query(tableName, projection, where, whereArgs, null, null, sortOrder, null);
     }
     //////
