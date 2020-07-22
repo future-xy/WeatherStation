@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private WeatherNowBean.NowBaseBean nowBaseBean;
     private List<DailyBean> _15DBean;
     private AirNowBean.NowBean nowAirBean;
+    //DB
+    private WeatherDB db;
 
     final private Handler handler = new Handler(this);
     private RecyclerView recyclerView;
