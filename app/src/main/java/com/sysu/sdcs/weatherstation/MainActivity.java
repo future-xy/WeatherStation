@@ -28,7 +28,10 @@ import com.heweather.plugin.view.HeWeatherConfig;
 import com.heweather.plugin.view.RightLargeView;
 import com.heweather.plugin.view.VerticalView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import interfaces.heweather.com.interfacesmodule.bean.air.AirNowBean;
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private WeatherNowBean.NowBaseBean nowBaseBean;
     private List<DailyBean> _15DBean;
     private AirNowBean.NowBean nowAirBean;
+
     final private Handler handler = new Handler(this);
     private RecyclerView recyclerView;
     private TextView temperature;
@@ -63,7 +67,11 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private TextView so2;
     private TextView no2;
     private ArcProgress arcProgress;
-
+    private SunriseView sunriseView;
+    private int sunriseW;
+    private int sunriseH;
+    private String sunriseToday;
+    private String sunsetToday;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //edited by hyj
@@ -91,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         pm10 = findViewById(R.id.PM10);
         so2 = findViewById(R.id.SO2);
         no2 = findViewById(R.id.NO2);
+
         final Cities cities = new Cities();
         HeWeatherConfig.init(HWKEY, curCity);//UI SDK
         HeConfig.init(HWID, HWKEY);//DATA SDK
@@ -116,6 +125,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         arcProgress = findViewById(R.id.arc_progress);
 
         getWeatherInfo("CN" + cities.getCode(curCity));//好像失灵了...
+        sunriseView = findViewById(R.id.sun);
+
    /*   这部分代码移植到getWeatherInfo函数中了
         HeWeather.getWeatherNow(MainActivity.this, "CN101010100", Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherNowListener() {
             @Override
@@ -185,6 +196,26 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 //            }
 //        });
     }
+    public void  startSunAnim(int sunrise,int sunset){
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if(hour < sunrise){
+            sunriseView.sunAnim(0,sunriseW,sunriseH);
+        }else if(hour > sunset){
+            sunriseView.sunAnim(1,sunriseW,sunriseH);
+        }else {
+            sunriseView.sunAnim(((float) hour - (float) sunrise) / ((float) sunset - (float) sunrise),sunriseW,sunriseH);
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus) {
+            sunriseH = sunriseView.getLayoutParams().height;
+            sunriseW =  sunriseView.getLayoutParams().width;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -246,6 +277,9 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
                 if (Code.OK.getCode().equalsIgnoreCase(weatherDailyBean.getCode())) {
                     _15DBean = weatherDailyBean.getDaily();
+                    sunriseToday = _15DBean.get(0).getSunrise();
+                    sunsetToday = _15DBean.get(0).getSunset();
+
                     handler.sendEmptyMessage(15);
                 } else {
                     //在此查看返回数据失败的原因
@@ -279,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 }
             }
         });
+
         arcProgress.setVisibility(View.VISIBLE);
     }
 
@@ -302,8 +337,15 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             }
             Hour_Adapter adapter = new Hour_Adapter(this, data, days);
             recyclerView.setAdapter(adapter);
+
+            TextView sunriseTime = findViewById(R.id.sunrise_time);
+            TextView sunsetTime = findViewById(R.id.sunset_time);
+            sunriseTime.setText(sunriseToday);
+            sunsetTime.setText(sunsetToday);
+            startSunAnim(getHourFromTime(sunriseToday),getHourFromTime(sunsetToday));
             return true;
-        } else if (msg.what == 0) {
+        }
+        else if (msg.what == 0) {
             //首页天气在这里更新
             //即时温度
             temperature = findViewById(R.id.temperature);
@@ -354,21 +396,42 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             relativeHumility.setText(String.format("湿度%s%%", nowBaseBean.getHumidity()));
 
             return true;
-        }else if(msg.what==25){
+        }
+        else if(msg.what==25){
             String unit = "μg/m³";
-            String quality = nowAirBean.getAqi();
-            arcProgress.setProgress(Integer.parseInt(quality));
+            int quality = Integer.parseInt(nowAirBean.getAqi());
+            String qualityDescription = "";
+            if (quality<=50){
+                qualityDescription = "优";
+            }else if(quality<=100){
+                qualityDescription = "良";
+            }else if(quality<=150){
+                qualityDescription = "轻度污染";
+            }else if(quality<=200){
+                qualityDescription = "重度污染";
+            }else{
+                qualityDescription = "严重污染";
+            }
+            arcProgress.setProgress(quality);
+            arcProgress.setBottomText(qualityDescription);
             pm25.setText(nowAirBean.getPm2p5()+unit);
             pm10.setText(nowAirBean.getPm10()+unit);
             so2.setText(nowAirBean.getSo2()+unit);
             no2.setText(nowAirBean.getNo2()+unit);
             nowAirBean.getNo2();
+
+            return true;
+        }
+        else if(msg.what==13){
             return true;
         }
         else
             return false;
     }
-
+    private int getHourFromTime(String time){
+        String hour = time.substring(0,2);
+        return Integer.parseInt(hour);
+    }
     private String cloudLevel(Integer cloud) {
         if (cloud <= 30)
             return "晴";

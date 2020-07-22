@@ -104,12 +104,14 @@
                 android:paddingTop="50dp">
 
             </TextView>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/daily"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:layout_below="@+id/daily_title"
-                android:layout_marginTop="0dp" />
+                android:layout_marginTop="-44dp" />
+
             <TextView
                 android:id="@+id/quality_title"
                 android:layout_width="match_parent"
@@ -192,6 +194,39 @@
                 android:layout_toEndOf="@+id/PM2.5_title"
                 android:text="12ug/m³"
                 />
+            <TextView
+                android:id="@+id/sunrise_sunset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/NO2"
+                android:paddingTop="50dp"
+                android:text="日出日落时间"
+                android:textSize="20sp"
+                />
+            <com.sysu.sdcs.weatherstation.SunriseView
+                android:id="@+id/sun"
+                android:layout_width="400dp"
+                android:layout_height="100dp"
+                android:layout_below="@id/sunrise_sunset"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="06:00"
+                android:textSize="20sp"
+                android:layout_below="@id/sun"
+                android:id="@+id/sunrise_time">
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="19:00"
+                android:textSize="20sp"
+                android:id="@+id/sunset_time"
+                android:layout_below="@+id/sun"
+                android:layout_toEndOf="@+id/sunrise_time"
+                android:gravity="right">
+            </TextView>
+
         </RelativeLayout>
 
 
@@ -209,6 +244,4 @@
     <!--        android:layout_height="60dp"-->
     <!--        android:layout_alignParentBottom="true"-->
     <!--        app:bb_tabXmlResource="@xml/bottombar_tabs"/>-->
-
-    >
 </RelativeLayout>
