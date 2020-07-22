@@ -37,6 +37,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 import interfaces.heweather.com.interfacesmodule.bean.air.AirNowBean;
 import interfaces.heweather.com.interfacesmodule.bean.base.Code;
@@ -132,12 +133,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             }
         });
 
-        //如果有网则更新天气
-        if (networkConnected())
-            getWeatherInfo("CN" + cities.getCode(curCity));
-        else //否则从数据库读取
-            Log.d(TAG, "No Net!!!");
-
         sunriseView = findViewById(R.id.sun);
 
 //        unitTest();
@@ -226,81 +221,86 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         /*
             cityID: e.g. CN1010100
          */
-        HeWeather.getWeatherNow(MainActivity.this, cityID, Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherNowListener() {
-            @Override
-            public void onError(Throwable e) {
-                Log.i(TAG, "getWeather onError: " + e);
-            }
+        //如果有网则更新天气
+        if (networkConnected()) {
+            HeWeather.getWeatherNow(MainActivity.this, cityID, Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherNowListener() {
+                @Override
+                public void onError(Throwable e) {
+                    Log.i(TAG, "getWeather onError: " + e);
+                }
 
-            @Override
-            public void onSuccess(WeatherNowBean weatherBean) {
-                Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherBean));
-                //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
-                if (Code.OK.getCode().equalsIgnoreCase(weatherBean.getCode())) {
-                    nowBaseBean = weatherBean.getNow();
+                @Override
+                public void onSuccess(WeatherNowBean weatherBean) {
+                    Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherBean));
+                    //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
+                    if (Code.OK.getCode().equalsIgnoreCase(weatherBean.getCode())) {
+                        nowBaseBean = weatherBean.getNow();
                     /*
                     存到DB中
                      */
-                    handler.sendEmptyMessage(0);
-                } else {
-                    //在此查看返回数据失败的原因
-                    String status = weatherBean.getCode();
-                    Code code = Code.toEnum(status);
-                    Log.i(TAG, "failed code: " + code);
+                        handler.sendEmptyMessage(0);
+                    } else {
+                        //在此查看返回数据失败的原因
+                        String status = weatherBean.getCode();
+                        Code code = Code.toEnum(status);
+                        Log.i(TAG, "failed code: " + code);
+                    }
                 }
-            }
-        });
+            });
 
-        HeWeather.getWeather15D(MainActivity.this, cityID, Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherDailyListener() {
-            @Override
-            public void onError(Throwable throwable) {
-                Log.i(TAG, "getWeather onError: " + throwable);
-            }
+            HeWeather.getWeather15D(MainActivity.this, cityID, Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherDailyListener() {
+                @Override
+                public void onError(Throwable throwable) {
+                    Log.i(TAG, "getWeather onError: " + throwable);
+                }
 
-            @Override
-            public void onSuccess(WeatherDailyBean weatherDailyBean) {
-                Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherDailyBean));
-                //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
-                if (Code.OK.getCode().equalsIgnoreCase(weatherDailyBean.getCode())) {
-                    _15DBean = weatherDailyBean.getDaily();
-                    sunriseToday = _15DBean.get(0).getSunrise();
-                    sunsetToday = _15DBean.get(0).getSunset();
+                @Override
+                public void onSuccess(WeatherDailyBean weatherDailyBean) {
+                    Log.i(TAG, "getWeather onSuccess: " + new Gson().toJson(weatherDailyBean));
+                    //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
+                    if (Code.OK.getCode().equalsIgnoreCase(weatherDailyBean.getCode())) {
+                        _15DBean = weatherDailyBean.getDaily();
+                        sunriseToday = _15DBean.get(0).getSunrise();
+                        sunsetToday = _15DBean.get(0).getSunset();
                     /*
                     存到DB中
                      */
-                    handler.sendEmptyMessage(15);
-                } else {
-                    //在此查看返回数据失败的原因
-                    String status = weatherDailyBean.getCode();
-                    Code code = Code.toEnum(status);
-                    Log.i(TAG, "failed code: " + code);
+                        handler.sendEmptyMessage(15);
+                    } else {
+                        //在此查看返回数据失败的原因
+                        String status = weatherDailyBean.getCode();
+                        Code code = Code.toEnum(status);
+                        Log.i(TAG, "failed code: " + code);
+                    }
                 }
-            }
-        });
+            });
 
-        HeWeather.getAirNow(MainActivity.this, cityID, Lang.ZH_HANS, new HeWeather.OnResultAirNowListener() {
-            @Override
-            public void onError(Throwable throwable) {
-                Log.i(TAG, "getAir onError: " + throwable);
-            }
+            HeWeather.getAirNow(MainActivity.this, cityID, Lang.ZH_HANS, new HeWeather.OnResultAirNowListener() {
+                @Override
+                public void onError(Throwable throwable) {
+                    Log.i(TAG, "getAir onError: " + throwable);
+                }
 
-            @Override
-            public void onSuccess(AirNowBean airNowBean) {
-                Log.i(TAG, "getAir onSuccess: " + new Gson().toJson(airNowBean));
-                if (Code.OK.getCode().equalsIgnoreCase(airNowBean.getCode())) {
-                    nowAirBean = airNowBean.getNow();
+                @Override
+                public void onSuccess(AirNowBean airNowBean) {
+                    Log.i(TAG, "getAir onSuccess: " + new Gson().toJson(airNowBean));
+                    if (Code.OK.getCode().equalsIgnoreCase(airNowBean.getCode())) {
+                        nowAirBean = airNowBean.getNow();
                                         /*
                     存到DB中
                      */
-                    handler.sendEmptyMessage(25);
-                } else {
-                    //在此查看返回数据失败的原因
-                    String status = airNowBean.getCode();
-                    Code code = Code.toEnum(status);
-                    Log.i(TAG, "failed code: " + code);
+                        handler.sendEmptyMessage(25);
+                    } else {
+                        //在此查看返回数据失败的原因
+                        String status = airNowBean.getCode();
+                        Code code = Code.toEnum(status);
+                        Log.i(TAG, "failed code: " + code);
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            Log.d(TAG, "No Net!!!");
+        }
 
         arcProgress.setVisibility(View.VISIBLE);
     }
@@ -354,6 +354,16 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         }
         weather1.setText(weatherL);
         ImageView weatherPic = findViewById(R.id.weatherpic);
+        /*
+        JUST FOR TEST!!!
+        DELETE IT!!!
+         */
+        String[] testWweather = new String[]{"小雨", "中雨", "大雨", "暴雨", "阴", "多云", "晴"};
+        Random random = new Random();
+        weatherL = testWweather[(random.nextInt() % testWweather.length + testWweather.length) % testWweather.length];
+        /*
+        TEST END
+         */
         switch (weatherL) {
             case "小雨":
                 weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_smallrain));
@@ -415,6 +425,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     @Override
     public boolean handleMessage(@NonNull Message msg) {
         //如果获取到15天天气
+        Log.d(TAG, String.valueOf(msg.what));
         if (msg.what == 15) {
             return update15Days();
         } else if (msg.what == 0) {
