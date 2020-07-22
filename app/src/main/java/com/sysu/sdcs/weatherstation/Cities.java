@@ -32,7 +32,7 @@ public class Cities {
     private HashMap<String, String> city_code;
 
     public Cities() {
-        city_code = new HashMap<String, String>();
+        city_code = new HashMap<>();
         int city_num = codes.length;
         for (int i = 0; i < city_num; i++) {
             city_code.put(citynames[i], codes[i]);

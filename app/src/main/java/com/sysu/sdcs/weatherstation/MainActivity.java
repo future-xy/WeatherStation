@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private int sunriseH;
     private String sunriseToday;
     private String sunsetToday;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //edited by hyj
@@ -196,24 +197,25 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 //            }
 //        });
     }
-    public void  startSunAnim(int sunrise,int sunset){
+
+    public void startSunAnim(int sunrise, int sunset) {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if(hour < sunrise){
-            sunriseView.sunAnim(0,sunriseW,sunriseH);
-        }else if(hour > sunset){
-            sunriseView.sunAnim(1,sunriseW,sunriseH);
-        }else {
-            sunriseView.sunAnim(((float) hour - (float) sunrise) / ((float) sunset - (float) sunrise),sunriseW,sunriseH);
+        if (hour < sunrise) {
+            sunriseView.sunAnim(0, sunriseW, sunriseH);
+        } else if (hour > sunset) {
+            sunriseView.sunAnim(1, sunriseW, sunriseH);
+        } else {
+            sunriseView.sunAnim(((float) hour - (float) sunrise) / ((float) sunset - (float) sunrise), sunriseW, sunriseH);
         }
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if(hasFocus) {
+        if (hasFocus) {
             sunriseH = sunriseView.getLayoutParams().height;
-            sunriseW =  sunriseView.getLayoutParams().width;
+            sunriseW = sunriseView.getLayoutParams().width;
         }
     }
 
@@ -290,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             }
         });
 
-        HeWeather.getAirNow(MainActivity.this, cityID, Lang.ZH_HANS,new HeWeather.OnResultAirNowListener(){
+        HeWeather.getAirNow(MainActivity.this, cityID, Lang.ZH_HANS, new HeWeather.OnResultAirNowListener() {
 
 
             @Override
@@ -342,10 +344,9 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             TextView sunsetTime = findViewById(R.id.sunset_time);
             sunriseTime.setText(sunriseToday);
             sunsetTime.setText(sunsetToday);
-            startSunAnim(getHourFromTime(sunriseToday),getHourFromTime(sunsetToday));
+            startSunAnim(getHourFromTime(sunriseToday), getHourFromTime(sunsetToday));
             return true;
-        }
-        else if (msg.what == 0) {
+        } else if (msg.what == 0) {
             //首页天气在这里更新
             //即时温度
             temperature = findViewById(R.id.temperature);
@@ -396,42 +397,41 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             relativeHumility.setText(String.format("湿度%s%%", nowBaseBean.getHumidity()));
 
             return true;
-        }
-        else if(msg.what==25){
+        } else if (msg.what == 25) {
             String unit = "μg/m³";
             int quality = Integer.parseInt(nowAirBean.getAqi());
             String qualityDescription = "";
-            if (quality<=50){
+            if (quality <= 50) {
                 qualityDescription = "优";
-            }else if(quality<=100){
+            } else if (quality <= 100) {
                 qualityDescription = "良";
-            }else if(quality<=150){
+            } else if (quality <= 150) {
                 qualityDescription = "轻度污染";
-            }else if(quality<=200){
+            } else if (quality <= 200) {
                 qualityDescription = "重度污染";
-            }else{
+            } else {
                 qualityDescription = "严重污染";
             }
             arcProgress.setProgress(quality);
             arcProgress.setBottomText(qualityDescription);
-            pm25.setText(nowAirBean.getPm2p5()+unit);
-            pm10.setText(nowAirBean.getPm10()+unit);
-            so2.setText(nowAirBean.getSo2()+unit);
-            no2.setText(nowAirBean.getNo2()+unit);
+            pm25.setText(nowAirBean.getPm2p5() + unit);
+            pm10.setText(nowAirBean.getPm10() + unit);
+            so2.setText(nowAirBean.getSo2() + unit);
+            no2.setText(nowAirBean.getNo2() + unit);
             nowAirBean.getNo2();
 
             return true;
-        }
-        else if(msg.what==13){
+        } else if (msg.what == 13) {
             return true;
-        }
-        else
+        } else
             return false;
     }
-    private int getHourFromTime(String time){
-        String hour = time.substring(0,2);
+
+    private int getHourFromTime(String time) {
+        String hour = time.substring(0, 2);
         return Integer.parseInt(hour);
     }
+
     private String cloudLevel(Integer cloud) {
         if (cloud <= 30)
             return "晴";

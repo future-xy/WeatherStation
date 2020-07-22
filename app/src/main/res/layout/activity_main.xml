@@ -93,17 +93,17 @@
                 android:layout_toEndOf="@+id/temperature"
                 android:background="@drawable/loading_icon"
                 android:contentDescription="天气"
-                android:paddingStart="50dp"
-                />
+                android:paddingStart="50dp" />
+
             <TextView
+                android:id="@+id/daily_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="15日天气"
                 android:layout_below="@+id/wind_direction"
                 android:layout_marginTop="50dp"
-                android:textSize="20sp"
-                android:id="@+id/daily_title"
-                android:paddingTop="50dp">
+                android:paddingTop="50dp"
+                android:text="15日天气"
+                android:textSize="20sp">
 
             </TextView>
 
@@ -121,81 +121,78 @@
                 android:layout_below="@+id/daily"
                 android:paddingTop="50dp"
                 android:text="空气质量"
-                android:textSize="20sp"
-                >
-            </TextView>
+                android:textSize="20sp"></TextView>
+
             <com.github.lzyzsd.circleprogress.ArcProgress
                 android:id="@+id/arc_progress"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
+                android:layout_below="@+id/quality_title"
                 android:layout_marginTop="50dp"
-                app:arc_progress="50"
-                app:arc_max="180"
+                android:visibility="invisible"
                 app:arc_bottom_text="优"
                 app:arc_bottom_text_size="20sp"
-                app:arc_suffix_text=" "
-                android:layout_below="@+id/quality_title"
-                android:visibility="invisible">
-            </com.github.lzyzsd.circleprogress.ArcProgress>
+                app:arc_max="180"
+                app:arc_progress="50"
+                app:arc_suffix_text=" "></com.github.lzyzsd.circleprogress.ArcProgress>
 
 
-
-                <TextView
-                    style="@style/RowItemTop"
-                    android:layout_below="@+id/quality_title"
-                    android:layout_toEndOf="@+id/arc_progress"
-                    android:id="@+id/PM2.5_title"
-                    android:text="pm2.5[入肺颗粒物]"
-                    />
-                <TextView
-                    style="@style/RowItemTopRight"
-                    android:id="@+id/PM2.5"
-                    android:layout_below="@+id/quality_title"
-                    android:layout_toEndOf="@+id/PM2.5_title"
-                    android:text="12ug/m³"
-                    />
             <TextView
+                android:id="@+id/PM2.5_title"
+                style="@style/RowItemTop"
+                android:layout_below="@+id/quality_title"
+                android:layout_toEndOf="@+id/arc_progress"
+                android:text="pm2.5[入肺颗粒物]" />
+
+            <TextView
+                android:id="@+id/PM2.5"
+                style="@style/RowItemTopRight"
+                android:layout_below="@+id/quality_title"
+                android:layout_toEndOf="@+id/PM2.5_title"
+                android:text="12ug/m³" />
+
+            <TextView
+                android:id="@+id/PM10_title"
                 style="@style/RowItem"
                 android:layout_below="@+id/PM2.5_title"
                 android:layout_toEndOf="@+id/arc_progress"
-                android:id="@+id/PM10_title"
-                android:text="pm10[入肺颗粒物]"
-                />
+                android:text="pm10[入肺颗粒物]" />
+
             <TextView
-                style="@style/RowItemRight"
                 android:id="@+id/PM10"
+                style="@style/RowItemRight"
                 android:layout_below="@+id/PM2.5"
                 android:layout_toEndOf="@+id/PM2.5_title"
-                android:text="12ug/m³"
-                />
+                android:text="12ug/m³" />
+
             <TextView
+                android:id="@+id/SO2_title"
                 style="@style/RowItem"
                 android:layout_below="@+id/PM10_title"
                 android:layout_toEndOf="@+id/arc_progress"
-                android:id="@+id/SO2_title"
-                android:text="SO2[二氧化硫]"
-                />
+                android:text="SO2[二氧化硫]" />
+
             <TextView
-                style="@style/RowItemRight"
                 android:id="@+id/SO2"
+                style="@style/RowItemRight"
                 android:layout_below="@+id/PM10"
                 android:layout_toEndOf="@+id/PM2.5_title"
-                android:text="12ug/m³"
-                />
+                android:text="12ug/m³" />
+
             <TextView
+                android:id="@+id/NO2_title"
                 style="@style/RowItem"
                 android:layout_below="@+id/SO2_title"
                 android:layout_toEndOf="@+id/arc_progress"
-                android:id="@+id/NO2_title"
-                android:text="NO2[二氧化氮]"
-                />
+                android:text="NO2[二氧化氮]" />
+
             <TextView
-                style="@style/RowItemRight"
                 android:id="@+id/NO2"
+                style="@style/RowItemRight"
                 android:layout_below="@+id/SO2"
                 android:layout_toEndOf="@+id/PM2.5_title"
-                android:text="12ug/m³"
-                />
+                android:text="12ug/m³" />
+
             <TextView
                 android:id="@+id/sunrise_sunset"
                 android:layout_width="match_parent"
@@ -203,32 +200,32 @@
                 android:layout_below="@+id/NO2"
                 android:paddingTop="100dp"
                 android:text="日出日落时间"
-                android:textSize="20sp"
-                />
+                android:textSize="20sp" />
+
             <com.sysu.sdcs.weatherstation.SunriseView
                 android:id="@+id/sun"
                 android:layout_width="400dp"
                 android:layout_height="100dp"
-                android:layout_marginTop="50dp"
-                android:layout_below="@id/sunrise_sunset"/>
+                android:layout_below="@id/sunrise_sunset"
+                android:layout_marginTop="50dp" />
+
             <TextView
+                android:id="@+id/sunrise_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="06:00"
-                android:textSize="20sp"
                 android:layout_below="@id/sun"
-                android:id="@+id/sunrise_time">
-            </TextView>
+                android:text="06:00"
+                android:textSize="20sp"></TextView>
+
             <TextView
+                android:id="@+id/sunset_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="19:00"
-                android:textSize="20sp"
-                android:id="@+id/sunset_time"
                 android:layout_below="@+id/sun"
                 android:layout_toEndOf="@+id/sunrise_time"
-                android:gravity="right">
-            </TextView>
+                android:gravity="right"
+                android:text="19:00"
+                android:textSize="20sp"></TextView>
 
         </RelativeLayout>
 

@@ -79,8 +79,7 @@ public class SunriseView extends View {
 
             //画小太阳
             canvas.drawBitmap(mSunBitmap, mMovePointX - mBitmapW, mMovePointY - mBitmapH, null);
-        }
-        else if (mNotUp || mHasDown) {
+        } else if (mNotUp || mHasDown) {
             //画曲线
             canvas.save();
             canvas.clipRect(mMovePointX - mBitmapW / 2, mMovePointY - mBitmapH / 2, mMovePointX + mBitmapW / 2, mMovePointY + mBitmapH / 2, Region.Op.DIFFERENCE);
@@ -103,8 +102,8 @@ public class SunriseView extends View {
         }
     }
 
-    public void sunAnim(final float a,final int sunriseW,final int sunriseH) {
-        initData(sunriseW,sunriseH);
+    public void sunAnim(final float a, final int sunriseW, final int sunriseH) {
+        initData(sunriseW, sunriseH);
         if (a == 0) {
             mSunBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.daily_deatil_sun_up);
             mBitmapW = mSunBitmap.getWidth() / 2;
@@ -113,8 +112,7 @@ public class SunriseView extends View {
             isNeedSun = false;
             mHasDown = false;
             invalidate();
-        }
-        else if (a == 1) {
+        } else if (a == 1) {
             mSunBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.daily_deatil_sun_up);
             mBitmapW = mSunBitmap.getWidth() / 2;
             mBitmapH = mSunBitmap.getHeight();
@@ -124,8 +122,7 @@ public class SunriseView extends View {
             mMovePointX = mEndPointX;
             mMovePointY = mEndPointY;
             invalidate();
-        }
-        else {
+        } else {
             mSunBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.daily_deatil_sun);
             mBitmapW = mSunBitmap.getWidth() / 2;
             mBitmapH = mSunBitmap.getHeight() / 2;
@@ -137,7 +134,7 @@ public class SunriseView extends View {
             progressAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    /**每次在初始值和结束值之间产生的一个平滑过渡的值，逐步去更新进度*/
+                    /*每次在初始值和结束值之间产生的一个平滑过渡的值，逐步去更新进度*/
                     float x = (float) animation.getAnimatedValue();
                     if ((x - 210) <= (120 * a)) {
                         mMovePointX = mCirclePointX + (int) (mRadius * (Math.cos(x * 3.14 / 180)));
@@ -168,10 +165,10 @@ public class SunriseView extends View {
 
         //开始坐标的XY
         mStartPointX = dp2px(19);
-        mStartPointY = sunriseH+dp2px(9);
+        mStartPointY = sunriseH + dp2px(9);
 
         //结束坐标的XY
-        mEndPointX = sunriseW-dp2px(19);
+        mEndPointX = sunriseW - dp2px(19);
         mEndPointY = mStartPointY;
 
         //太阳的移动坐标的XY
@@ -185,12 +182,12 @@ public class SunriseView extends View {
         //mCirclePointX = dp2px(sunriseW/2);
         //mCirclePointY = dp2px(sunriseH/2);
         float angle = 70;
-        double widh = (mEndPointX+0.0-mStartPointX)/2;
-        mRadius = (int)(widh/Math.sin(angle*Math.PI/180));
+        double widh = (mEndPointX + 0.0 - mStartPointX) / 2;
+        mRadius = (int) (widh / Math.sin(angle * Math.PI / 180));
         //mRadius = (int)Math.sqrt(Math.pow(mEndPointX-mStartPointX,2)+Math.pow(35,2));
         mCirclePointX = mRadius;
-        mCirclePointY = (int)(100+mRadius*Math.sin(angle*Math.PI/180));
-        Log.d("circle",dp2px(400)+"");
+        mCirclePointY = (int) (100 + mRadius * Math.sin(angle * Math.PI / 180));
+        Log.d("circle", dp2px(400) + "");
         //圆的初始化
         mRectF = new RectF(mCirclePointX - mRadius, mCirclePointY - mRadius, mCirclePointX + mRadius, mCirclePointY + mRadius);
     }
@@ -198,7 +195,7 @@ public class SunriseView extends View {
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        if(hasWindowFocus){
+        if (hasWindowFocus) {
             int wid = getRootView().getWidth();
             int hei = getRootView().getHeight();
         }
