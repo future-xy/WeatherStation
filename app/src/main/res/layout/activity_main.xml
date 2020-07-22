@@ -93,12 +93,14 @@
                 android:layout_toEndOf="@+id/temperature"
                 android:background="@drawable/loading_icon"
                 android:contentDescription="天气"
-                android:paddingStart="50dp" />
+                android:paddingStart="50dp"
+                />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="15日天气"
                 android:layout_below="@+id/wind_direction"
+                android:layout_marginTop="50dp"
                 android:textSize="20sp"
                 android:id="@+id/daily_title"
                 android:paddingTop="50dp">
@@ -110,7 +112,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:layout_below="@+id/daily_title"
-                android:layout_marginTop="-44dp" />
+                android:layout_marginTop="10dp" />
 
             <TextView
                 android:id="@+id/quality_title"
@@ -130,7 +132,7 @@
                 app:arc_progress="50"
                 app:arc_max="180"
                 app:arc_bottom_text="优"
-                app:arc_bottom_text_size="30sp"
+                app:arc_bottom_text_size="20sp"
                 app:arc_suffix_text=" "
                 android:layout_below="@+id/quality_title"
                 android:visibility="invisible">
@@ -199,7 +201,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/NO2"
-                android:paddingTop="50dp"
+                android:paddingTop="100dp"
                 android:text="日出日落时间"
                 android:textSize="20sp"
                 />
@@ -207,6 +209,7 @@
                 android:id="@+id/sun"
                 android:layout_width="400dp"
                 android:layout_height="100dp"
+                android:layout_marginTop="50dp"
                 android:layout_below="@id/sunrise_sunset"/>
             <TextView
                 android:layout_width="wrap_content"
