@@ -78,12 +78,12 @@ public class CityList extends AppCompatActivity {
 
     private void listCites(Cursor cursor) {
         if (cursor != null) {
-            weas = new ArrayList<SimWea>();
+            weas = new ArrayList<>();
             while (cursor.moveToNext()) {
                 SimWea tmp = new SimWea();
                 tmp.setID(cursor.getString(cursor.getColumnIndex("LocationID")));
                 tmp.setCity(cursor.getString(cursor.getColumnIndex("City")));
-                tmp.setTemp(cursor.getInt(cursor.getColumnIndex("Temperature")));
+                tmp.setTemp(cursor.getString(cursor.getColumnIndex("Temperature")));
                 //tmp.setText(cursor.getString(cursor.getColumnIndex("Text")));
                 weas.add(tmp);
             }
@@ -146,7 +146,6 @@ public class CityList extends AppCompatActivity {
         Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show();
         Cursor newCursor = weatherDb.query("WeatherNow", null, null, null, null);
         listCites(newCursor);
-
     }
 
     // 设置为当前城市
@@ -171,9 +170,9 @@ public class CityList extends AppCompatActivity {
                 public void run() {
                     try {
                         // 刷新城市列表，等待API调用完毕
-                        for (int i = 0; i < 5; i++) {
+                        for (int i = 0; i < 20; i++) {
                             handler.sendEmptyMessage(0x123);
-                            Thread.sleep(500);
+                            Thread.sleep(100);
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();

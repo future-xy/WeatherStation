@@ -20,7 +20,7 @@ class DBOpenHandler extends SQLiteOpenHelper {
         // 创建一个实况天气表, 此处 Temperature属性名跟腾讯文档定义的不同， 可能有其他属性需要补充
         db.execSQL("CREATE TABLE WeatherNow(LocationID text primary key, City text,"
                 + "Temperature interger, Icon text, Text text, WindDir text, "
-                + "WindScale text, Humidity interger, Precip Int, Vis Int, modified_time timestamp)");
+                + "WindScale text, Humidity interger, Precip Int, Vis Int, AirBean text, DayBean text, modified_time timestamp)");
         db.execSQL("CREATE TABLE WeatherDaily(LocationID text primary key, Status text,"
                 + "modified_time timestamp)");
         db.execSQL("CREATE TABLE UserInfo(Name text primary key, Password text,"

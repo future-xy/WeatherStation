@@ -1,6 +1,9 @@
 package com.sysu.sdcs.weatherstation;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -26,10 +29,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.heweather.plugin.view.HeWeatherConfig;
 import com.heweather.plugin.view.RightLargeView;
 import com.heweather.plugin.view.VerticalView;
 
+import java.lang.reflect.GenericSignatureFormatError;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private String HWID = "HE2007141352421044";
     private String HWKEY = "a6e621bd44ed41559b84f5450b42896c";
     private String APIKEY = "ff91402a13b144cf8ec6829df147c84f";
-    private String curCity = "广州";//默认城市
+    private String defaultCity = "广州";//默认城市
     private VerticalView verticalView;
     private RightLargeView rightLargeView;
     private static MainActivity mainActivity;
@@ -59,7 +65,9 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private List<DailyBean> _15DBean;
     private AirNowBean.NowBean nowAirBean;
     //DB
-    private WeatherDB db;
+    SQLiteDatabase db;
+    final ArrayList<String> city_names = new ArrayList<>();
+    final Cities cities = new Cities();
 
     final private Handler handler = new Handler(this);
     private RecyclerView recyclerView;
@@ -109,22 +117,23 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
         arcProgress = findViewById(R.id.arc_progress);
 
-        final Cities cities = new Cities();
-        HeWeatherConfig.init(HWKEY, curCity);//UI SDK
+        HeWeatherConfig.init(HWKEY, defaultCity);//UI SDK
         HeConfig.init(HWID, HWKEY);//DATA SDK
         HeConfig.switchToDevService();//没有专业版,切换到开发者模式
 
         //通过Spinner切换城市，测试版
-        //有db之后应该从db中读取城市列表
-        final String[] city_names = cities.getCitynames();
+        DBOpenHandler dbOpenHandler = new DBOpenHandler(this, "dbWeather.db3", null, 1);
+        db = dbOpenHandler.getWritableDatabase();
+        city_names.add(defaultCity);
+        Log.d(TAG, "DB");
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, city_names);
         Spinner spinner = findViewById(R.id.city_name_spinner);
         spinner.setAdapter(arrayAdapter);
         spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, city_names[position]);
-                getWeatherInfo(cities.getCode(city_names[position]));
+                Log.d(TAG, city_names.get(position));
+                getWeatherInfo(cities.getCode(city_names.get(position)), city_names.get(position));
             }
 
             @Override
@@ -173,6 +182,23 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         return false;
     }
 
+    //获取当前数据库中的城市名
+    void getCityNames() {
+        Cursor cursor = db.query("WeatherNow", new String[]{"City"}, null, null, null, null, null);
+        if (cursor != null) {
+//            if (cursor.moveToFirst())
+//                city_names.clear();
+            while (cursor.moveToNext()) {
+                city_names.add(cursor.getString(cursor.getColumnIndex("City")));
+                Log.d(TAG, "1");
+            }
+            Log.d(TAG, city_names.size() + "");
+            cursor.close();
+        } else {
+            city_names.add(defaultCity);
+        }
+    }
+
     public void startSunAnim(int sunrise, int sunset) {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -191,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         if (hasFocus) {
             sunriseH = sunriseView.getLayoutParams().height;
             sunriseW = sunriseView.getLayoutParams().width;
+//            getCityNames();
         }
     }
 
@@ -224,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     }
 
     //以后在这个函数添加功能时，如果顺利获取天气就存在db中
-    public void getWeatherInfo(String cityID) {
+    public void getWeatherInfo(final String cityID, final String cityName) {
         /*
             cityID: e.g. CN1010100
          */
@@ -242,9 +269,13 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                     //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
                     if (Code.OK.getCode().equalsIgnoreCase(weatherBean.getCode())) {
                         nowBaseBean = weatherBean.getNow();
-                    /*
-                    存到DB中
-                     */
+
+                        //插入数据到数据库
+                        ContentValues cv = new ContentValues();
+                        cv.put("LocationID", cityID);
+                        cv.put("DayBean", new Gson().toJson(nowBaseBean));
+                        db.replace("WeatherNow", String.format("LocationID=%s", cityID), cv);
+
                         handler.sendEmptyMessage(0);
                     } else {
                         //在此查看返回数据失败的原因
@@ -267,10 +298,17 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                     //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
                     if (Code.OK.getCode().equalsIgnoreCase(weatherDailyBean.getCode())) {
                         _15DBean = weatherDailyBean.getDaily();
+                        Log.d(TAG, new Gson().toJson(_15DBean));
                         sunriseToday = _15DBean.get(0).getSunrise();
                         sunsetToday = _15DBean.get(0).getSunset();
                         String _15DStr = new Gson().toJson(_15DBean);
-//                        db.insert("WeatherDaily",);
+
+                        ContentValues cv = new ContentValues();
+                        cv.put("Status", _15DStr);
+                        cv.put("LocationID", cityID);
+                        long ret = db.replace("WeatherDaily", String.format("LocationID=%s", cityID), cv);
+
+                        Log.d(TAG, String.format("LocationID=%s", cityID) + " " + ret);
                         handler.sendEmptyMessage(15);
                     } else {
                         //在此查看返回数据失败的原因
@@ -292,9 +330,11 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                     Log.i(TAG, "getAir onSuccess: " + new Gson().toJson(airNowBean));
                     if (Code.OK.getCode().equalsIgnoreCase(airNowBean.getCode())) {
                         nowAirBean = airNowBean.getNow();
-                                        /*
-                    存到DB中
-                     */
+                        ContentValues cv = new ContentValues();
+                        cv.put("AirBean", new Gson().toJson(nowAirBean));
+                        Log.d(TAG, new Gson().toJson(nowAirBean));
+                        long ret = db.update("WeatherNow", cv, String.format("LocationID=%s", cityID), null);
+                        Log.d(TAG, "onSuccess: " + ret);
                         handler.sendEmptyMessage(25);
                     } else {
                         //在此查看返回数据失败的原因
@@ -306,6 +346,59 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             });
         } else {
             Log.d(TAG, "No Net!!!");
+            //从数据库中读取缓存数据
+            //15天数据
+            Cursor cursor = db.query("WeatherDaily", new String[]{"Status"}, "LocationID=?", new String[]{cityID}, null, null, null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    Type collectionType = new TypeToken<List<DailyBean>>() {
+                    }.getType();
+                    String jsonString = cursor.getString(cursor.getColumnIndex("Status"));
+                    _15DBean = new Gson().fromJson(jsonString, collectionType);
+                }
+                if (_15DBean != null) {
+                    sunriseToday = _15DBean.get(0).getSunrise();
+                    sunsetToday = _15DBean.get(0).getSunset();
+                    update15Days();
+                }
+                cursor.close();
+            } else {
+                Log.d(TAG, "NO 15 data");
+            }
+            cursor = db.query("WeatherNow", new String[]{"AirBean"}, "LocationID=?", new String[]{cityID}, null, null, null);
+            if (cursor != null)
+                while (cursor.moveToNext()) {
+                    String s = cursor.getString(cursor.getColumnIndex("AirBean"));
+                    if (s != null)
+                        Log.d(TAG, s);
+                    else
+                        Log.d(TAG, "SSS");
+                }
+
+            cursor = db.query("WeatherNow", new String[]{"AirBean", "DayBean"}, "LocationID=?", new String[]{cityID}, null, null, null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    Type airBean = new TypeToken<AirNowBean.NowBean>() {
+                    }.getType();
+                    Type nowBean = new TypeToken<WeatherNowBean.NowBaseBean>() {
+                    }.getType();
+                    String airString = cursor.getString(cursor.getColumnIndex("AirBean"));
+                    Log.d(TAG, "AIR");
+                    if (airString == null)
+                        Log.d(TAG, "NULLAIR");
+                    String nowString = cursor.getString(cursor.getColumnIndex("DayBean"));
+                    nowBaseBean = new Gson().fromJson(nowString, nowBean);
+                    nowAirBean = new Gson().fromJson(airString, airBean);
+                }
+                if (nowAirBean != null)
+                    updateAir();
+                if (nowBaseBean != null) {
+                    updateMain();
+                }
+                cursor.close();
+            } else {
+                Log.d(TAG, "NO now data");
+            }
         }
 
         arcProgress.setVisibility(View.VISIBLE);
@@ -340,6 +433,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
     //首页天气在这里更新
     boolean updateMain() {
+        Log.d(TAG, new Gson().toJson(nowBaseBean));
         //即时温度
         temperature = findViewById(R.id.temperature);
         temperature.setText(String.format("%s℃", nowBaseBean.getTemp()));
@@ -360,16 +454,16 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         }
         weather1.setText(weatherL);
         ImageView weatherPic = findViewById(R.id.weatherpic);
-        /*
-        JUST FOR TEST!!!
-        DELETE IT!!!
-         */
-        String[] testWweather = new String[]{"小雨", "中雨", "大雨", "暴雨", "阴", "多云", "晴"};
-        Random random = new Random();
-        weatherL = testWweather[(random.nextInt() % testWweather.length + testWweather.length) % testWweather.length];
-        /*
-        TEST END
-         */
+//        /*
+//        JUST FOR TEST!!!
+//        DELETE IT!!!
+//         */
+//        String[] testWweather = new String[]{"小雨", "中雨", "大雨", "暴雨", "阴", "多云", "晴"};
+//        Random random = new Random();
+//        weatherL = testWweather[(random.nextInt() % testWweather.length + testWweather.length) % testWweather.length];
+//        /*
+//        TEST END
+//         */
         switch (weatherL) {
             case "小雨":
                 weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_smallrain));

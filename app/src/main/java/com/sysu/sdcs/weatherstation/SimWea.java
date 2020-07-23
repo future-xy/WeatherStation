@@ -3,13 +3,13 @@ package com.sysu.sdcs.weatherstation;
 public class SimWea {
     private String id;
     private String city;
-    private int temp;
+    private String temp;
     private String text;
 
     SimWea() {
     }
 
-    SimWea(String id, String city, int temp, String text) {
+    SimWea(String id, String city, String temp, String text) {
         this.id = id;
         this.city = city;
         this.temp = temp;
@@ -32,11 +32,11 @@ public class SimWea {
         this.city = name;
     }
 
-    public int getTemp() {
+    public String getTemp() {
         return temp;
     }
 
-    public void setTemp(int tem) {
+    public void setTemp(String tem) {
         this.temp = tem;
     }
 
