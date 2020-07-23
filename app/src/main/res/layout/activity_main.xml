@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
+        android:gravity="end"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
@@ -89,7 +89,7 @@
                 android:id="@+id/weatherpic"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_marginStart="92dp"
+                android:layout_marginStart="65dp"
                 android:layout_marginTop="45dp"
                 android:layout_toEndOf="@+id/temperature"
                 android:background="@drawable/loading_icon"
@@ -121,7 +121,7 @@
                 android:layout_below="@+id/daily"
                 android:paddingTop="50dp"
                 android:text="空气质量"
-                android:textSize="20sp"></TextView>
+                android:textSize="20sp" />
 
             <com.github.lzyzsd.circleprogress.ArcProgress
                 android:id="@+id/arc_progress"
@@ -134,7 +134,7 @@
                 app:arc_bottom_text_size="20sp"
                 app:arc_max="180"
                 app:arc_progress="50"
-                app:arc_suffix_text=" "></com.github.lzyzsd.circleprogress.ArcProgress>
+                app:arc_suffix_text=" " />
 
 
             <TextView
@@ -214,8 +214,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/sun"
+                android:paddingStart="20dp"
                 android:text="06:00"
-                android:textSize="20sp"></TextView>
+                android:paddingBottom="50dp"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/sunset_time"
@@ -223,9 +225,11 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/sun"
                 android:layout_toEndOf="@+id/sunrise_time"
-                android:gravity="right"
+                android:paddingEnd="20dp"
+                android:paddingBottom="50dp"
+                android:gravity="end"
                 android:text="19:00"
-                android:textSize="20sp"></TextView>
+                android:textSize="20sp" />
 
         </RelativeLayout>
 
