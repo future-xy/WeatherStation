@@ -62,14 +62,14 @@ public class AddCityActivity extends AppCompatActivity {
         mListView.setTextFilterEnabled(true);
 
         // 设置搜索结果listview监听
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 GeoBean.LocationBean tmp = lis.get(position);
                 getTempandInsert(tmp.getId(), tmp.getName());
                 Intent data = new Intent();
                 //resultCode是返回码,用来确定是哪个页面传来的数据，这里设置返回码是2
-                setResult(1,data);
+                setResult(1, data);
                 finish();
             }
         });
@@ -100,7 +100,7 @@ public class AddCityActivity extends AppCompatActivity {
                             List<GeoBean.LocationBean> tmpLis = geoBean.getLocationBean();
                             lis.addAll(tmpLis);
                             mStrs.clear();
-                            for(int i = 0; i < lis.size();i++){
+                            for (int i = 0; i < lis.size(); i++) {
                                 mStrs.add(lis.get(i).getName());
                             }
                             mListView.setAdapter(adapter);

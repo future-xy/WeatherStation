@@ -32,10 +32,10 @@ public class CityList extends AppCompatActivity {
     private ListView lv;
     private ArrayList<SimWea> weas;
 
-    Handler handler = new Handler(){
+    Handler handler = new Handler() {
         @Override
-        public void handleMessage(Message msg){
-            if(msg.what==0x123){
+        public void handleMessage(Message msg) {
+            if (msg.what == 0x123) {
                 Cursor cursor = weatherDb.query("WeatherNow", null, null, null, null);
                 listCites(cursor);
             }
@@ -57,7 +57,7 @@ public class CityList extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(CityList.this, AddCityActivity.class);
                 //startActivity(intent);
-                startActivityForResult(intent,1);
+                startActivityForResult(intent, 1);
             }
         });
         lv.addFooterView(view);
@@ -66,15 +66,15 @@ public class CityList extends AppCompatActivity {
     }
 
     //列出所有城市及其温度
-    private void listCity(){
+    private void listCity() {
         Cursor cursor = weatherDb.query("WeatherNow", null, null, null, null);
         listCites(cursor);
     }
 
-    private void listCites(Cursor cursor){
-        if(cursor!=null){
+    private void listCites(Cursor cursor) {
+        if (cursor != null) {
             weas = new ArrayList<SimWea>();
-            while(cursor.moveToNext()){
+            while (cursor.moveToNext()) {
                 SimWea tmp = new SimWea();
                 tmp.setID(cursor.getString(cursor.getColumnIndex("LocationID")));
                 tmp.setCity(cursor.getString(cursor.getColumnIndex("City")));
@@ -85,7 +85,7 @@ public class CityList extends AppCompatActivity {
         }
 
         ArrayList<Map<String, Object>> data = new ArrayList<>();
-        for(int i = 0; i < weas.size(); i++){
+        for (int i = 0; i < weas.size(); i++) {
             Map<String, Object> map = new HashMap<>();
             map.put("City", weas.get(i).getCity());
             map.put("Temperature", weas.get(i).getTemp());
@@ -101,26 +101,27 @@ public class CityList extends AppCompatActivity {
         lv.setLayoutParams(lp);
 
         // 短按跳转到详细天气页面
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             }
         });
         // 长按删除该城市
-        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 PopupMenu popup = new PopupMenu(CityList.this, view);
                 popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
                 final SimWea tmp = weas.get(position);
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        switch(item.getItemId()){
+                        switch (item.getItemId()) {
                             case R.id.del:
                                 delCity(tmp);
                                 break;
-                            default:break;
+                            default:
+                                break;
                         }
                         return true;
                     }
@@ -132,7 +133,7 @@ public class CityList extends AppCompatActivity {
     }
 
     // 删除城市
-    private void delCity(SimWea city){
+    private void delCity(SimWea city) {
         String id = city.getID();
         int ret = weatherDb.delete("WeatherNow", "LocationID=?", new String[]{String.valueOf(id)});
         Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show();
@@ -142,19 +143,19 @@ public class CityList extends AppCompatActivity {
     }
 
     @Override  // 用于响应AddCityActivity的跳转回复
-    protected void onActivityResult(int requestCode,int resultCode ,Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
-        if(requestCode==1&&resultCode==1){//当请求码是1&&返回码是1进行下面操作
-            new Thread(){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == 1) {//当请求码是1&&返回码是1进行下面操作
+            new Thread() {
                 @Override
-                public void run(){
-                    try{
+                public void run() {
+                    try {
                         // 刷新城市列表，等待API调用完毕
-                        for (int i=0; i < 5; i++){
+                        for (int i = 0; i < 5; i++) {
                             handler.sendEmptyMessage(0x123);
-                            Thread.sleep(2000);
+                            Thread.sleep(500);
                         }
-                    }catch(Exception ex){
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 }
