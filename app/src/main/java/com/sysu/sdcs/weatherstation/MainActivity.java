@@ -63,10 +63,12 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private String HWID = "HE2007141352421044";
     private String HWKEY = "a6e621bd44ed41559b84f5450b42896c";
     private String APIKEY = "ff91402a13b144cf8ec6829df147c84f";
-    private String defaultCity = "广州";//默认城市
     private VerticalView verticalView;
     private RightLargeView rightLargeView;
     private static MainActivity mainActivity;
+
+    private String defaultCity = "广州";//默认城市
+    static boolean setDefault = false;
     //临时存储天气
     private WeatherNowBean.NowBaseBean nowBaseBean;
     private List<DailyBean> _15DBean;
@@ -75,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     //DB
     SQLiteDatabase db;
     final static ArrayList<String> city_names = new ArrayList<>();
-    static boolean setDefault = false;
     final Cities cities = new Cities();
     LocationManager locationManager;
 
@@ -170,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 String name = cursor.getString(cursor.getColumnIndex("City"));
-                if (name != null)
+                if (name != null && !city_names.contains(name))
                     city_names.add(name);
             }
             cursor.close();
@@ -598,7 +599,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
     boolean updateDefault() {
         //更新default之后更新天气
-        city_names.add(defaultCity);
+        if (!city_names.contains(defaultCity))
+            city_names.add(defaultCity);
         getWeatherInfo(cities.getCode(defaultCity), defaultCity);
         arrayAdapter.notifyDataSetChanged();
         return true;
