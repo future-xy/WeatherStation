@@ -1,9 +1,13 @@
 package com.sysu.sdcs.weatherstation;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -19,10 +23,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +51,7 @@ import interfaces.heweather.com.interfacesmodule.bean.air.AirNowBean;
 import interfaces.heweather.com.interfacesmodule.bean.base.Code;
 import interfaces.heweather.com.interfacesmodule.bean.base.Lang;
 import interfaces.heweather.com.interfacesmodule.bean.base.Unit;
+import interfaces.heweather.com.interfacesmodule.bean.geo.GeoBean;
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean;
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean.DailyBean;
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherNowBean;
@@ -63,10 +70,13 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private WeatherNowBean.NowBaseBean nowBaseBean;
     private List<DailyBean> _15DBean;
     private AirNowBean.NowBean nowAirBean;
+    ArrayAdapter<String> arrayAdapter;
     //DB
     SQLiteDatabase db;
     final static ArrayList<String> city_names = new ArrayList<>();
+    static boolean setDefault = false;
     final Cities cities = new Cities();
+    LocationManager locationManager;
 
     final private Handler handler = new Handler(this);
     private RecyclerView recyclerView;
@@ -119,6 +129,38 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         HeConfig.init(HWID, HWKEY);//DATA SDK
         HeConfig.switchToDevService();//没有专业版,切换到开发者模式
 
+        if (!setDefault) {
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                String location = getLocation();
+                if (location.length() > 0) {
+                    HeWeather.getGeoCityLookup(MainActivity.this, location, new HeWeather.OnResultGeoListener() {
+                        @Override
+                        public void onError(Throwable throwable) {
+                            Log.i(TAG, "onError: " + throwable);
+                        }
+
+                        @Override
+                        public void onSuccess(GeoBean geoBean) {
+                            //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
+                            if (Code.OK.getCode().equalsIgnoreCase(geoBean.getStatus())) {
+                                List<GeoBean.LocationBean> locationBeans = geoBean.getLocationBean();
+                                defaultCity = locationBeans.get(0).getAdm2();
+                                Log.d(TAG, "onSuccess: " + defaultCity);
+                                handler.sendEmptyMessage(1);
+                                setDefault = true;
+                            } else {
+                                //在此查看返回数据失败的原因
+                                String status = geoBean.getStatus();
+                                Code code = Code.toEnum(status);
+                                Log.i("res", "failed code: " + code);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
         DBOpenHandler dbOpenHandler = new DBOpenHandler(this, "dbWeather.db3", null, 1);
         db = dbOpenHandler.getWritableDatabase();
         Cursor cursor = db.query("WeatherNow", new String[]{"City"}, null, null, null, null, null);
@@ -131,12 +173,12 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             }
             cursor.close();
         }
-        if (city_names.size() == 0)
-            city_names.add(defaultCity);
+//        if (city_names.size() == 0)
+//            city_names.add(defaultCity);
         Log.d(TAG, "onCreate: " + city_names.size());
 
         //通过Spinner切换城市，测试版
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, city_names);
+        arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, city_names);
         Spinner spinner = findViewById(R.id.city_name_spinner);
         spinner.setAdapter(arrayAdapter);
         spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
@@ -190,6 +232,22 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         }
 
         return false;
+    }
+
+    String getLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "getLocation: permission");
+            Toast.makeText(MainActivity.this, "请开启位置(GPS)权限", Toast.LENGTH_LONG).show();
+            return "";
+        }
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location != null) {
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            return longitude + "," + latitude;
+        }
+        Log.d(TAG, "getLocation: null");
+        return "";
     }
 
 
@@ -526,7 +584,18 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         } else if (msg.what == 25) {
             //如果获取到空气信息
             return updateAir();
+        } else if (msg.what == 1) {
+            //如果获取到用户位置
+            return updateDefault();
         } else return msg.what == 13;
+    }
+
+    boolean updateDefault() {
+        //更新default之后更新天气
+        city_names.add(defaultCity);
+        getWeatherInfo(cities.getCode(defaultCity), defaultCity);
+        arrayAdapter.notifyDataSetChanged();
+        return true;
     }
 
 
