@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private AirNowBean.NowBean nowAirBean;
     //DB
     SQLiteDatabase db;
-    final ArrayList<String> city_names = new ArrayList<>();
+    final static ArrayList<String> city_names = new ArrayList<>();
     final Cities cities = new Cities();
 
     final private Handler handler = new Handler(this);
@@ -121,11 +121,23 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         HeConfig.init(HWID, HWKEY);//DATA SDK
         HeConfig.switchToDevService();//没有专业版,切换到开发者模式
 
-        //通过Spinner切换城市，测试版
         DBOpenHandler dbOpenHandler = new DBOpenHandler(this, "dbWeather.db3", null, 1);
         db = dbOpenHandler.getWritableDatabase();
-        city_names.add(defaultCity);
-        Log.d(TAG, "DB");
+        Cursor cursor = db.query("WeatherNow", new String[]{"City"}, null, null, null, null, null);
+        city_names.clear();
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String name = cursor.getString(cursor.getColumnIndex("City"));
+                if (name != null)
+                    city_names.add(name);
+            }
+            cursor.close();
+        }
+        if (city_names.size() == 0)
+            city_names.add(defaultCity);
+        Log.d(TAG, "onCreate: " + city_names.size());
+
+        //通过Spinner切换城市，测试版
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, city_names);
         Spinner spinner = findViewById(R.id.city_name_spinner);
         spinner.setAdapter(arrayAdapter);
@@ -182,22 +194,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         return false;
     }
 
-    //获取当前数据库中的城市名
-    void getCityNames() {
-        Cursor cursor = db.query("WeatherNow", new String[]{"City"}, null, null, null, null, null);
-        if (cursor != null) {
-//            if (cursor.moveToFirst())
-//                city_names.clear();
-            while (cursor.moveToNext()) {
-                city_names.add(cursor.getString(cursor.getColumnIndex("City")));
-                Log.d(TAG, "1");
-            }
-            Log.d(TAG, city_names.size() + "");
-            cursor.close();
-        } else {
-            city_names.add(defaultCity);
-        }
-    }
 
     public void startSunAnim(int sunrise, int sunset) {
         Calendar calendar = Calendar.getInstance();
@@ -274,6 +270,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                         ContentValues cv = new ContentValues();
                         cv.put("LocationID", cityID);
                         cv.put("DayBean", new Gson().toJson(nowBaseBean));
+                        cv.put("City", cityName);
+                        cv.put("Temperature", nowBaseBean.getTemp());
                         db.replace("WeatherNow", String.format("LocationID=%s", cityID), cv);
 
                         handler.sendEmptyMessage(0);

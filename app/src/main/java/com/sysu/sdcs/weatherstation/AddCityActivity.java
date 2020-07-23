@@ -50,9 +50,9 @@ public class AddCityActivity extends AppCompatActivity {
         weatherDb = new WeatherDB(this);
         context = this;
         lis = new ArrayList<>();
-        mSearchView = (SearchView) findViewById(R.id.searchView);
+        mSearchView = findViewById(R.id.searchView);
         mSearchView.setIconifiedByDefault(false);
-        mListView = (ListView) findViewById(R.id.searchlistView);
+        mListView = findViewById(R.id.searchlistView);
         mStrs = new ArrayList<>();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mStrs);
         mListView.setAdapter(adapter);
@@ -148,7 +148,9 @@ public class AddCityActivity extends AppCompatActivity {
                     cv.put("City", name);
                     cv.put("Temperature", temperature[0]);
                     weatherDb.update("WeatherNow", cv, "LocationID=?", new String[]{lid});
-
+                    if (!MainActivity.city_names.contains(name)) {
+                        MainActivity.city_names.add(name);
+                    }
                 } else {
                     //在此查看返回数据失败的原因
                     String status = weatherBean.getCode();

@@ -81,8 +81,11 @@ public class CityList extends AppCompatActivity {
             weas = new ArrayList<>();
             while (cursor.moveToNext()) {
                 SimWea tmp = new SimWea();
+                String name = cursor.getString(cursor.getColumnIndex("City"));
+                if (name == null || name.length() == 0)
+                    continue;
                 tmp.setID(cursor.getString(cursor.getColumnIndex("LocationID")));
-                tmp.setCity(cursor.getString(cursor.getColumnIndex("City")));
+                tmp.setCity(name);
                 tmp.setTemp(cursor.getString(cursor.getColumnIndex("Temperature")));
                 //tmp.setText(cursor.getString(cursor.getColumnIndex("Text")));
                 weas.add(tmp);
@@ -142,10 +145,11 @@ public class CityList extends AppCompatActivity {
     // 删除城市
     private void delCity(SimWea city) {
         String id = city.getID();
-        int ret = weatherDb.delete("WeatherNow", "LocationID=?", new String[]{String.valueOf(id)});
+        weatherDb.delete("WeatherNow", "LocationID=?", new String[]{String.valueOf(id)});
         Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show();
         Cursor newCursor = weatherDb.query("WeatherNow", null, null, null, null);
         listCites(newCursor);
+        MainActivity.city_names.remove(city.getCity());
     }
 
     // 设置为当前城市
