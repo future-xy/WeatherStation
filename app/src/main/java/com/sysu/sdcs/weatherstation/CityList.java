@@ -73,7 +73,7 @@ public class CityList extends AppCompatActivity {
 
     private void listCites(Cursor cursor) {
         if (cursor != null) {
-            weas = new ArrayList<SimWea>();
+            weas = new ArrayList<>();
             while (cursor.moveToNext()) {
                 SimWea tmp = new SimWea();
                 tmp.setID(cursor.getString(cursor.getColumnIndex("LocationID")));
@@ -139,7 +139,6 @@ public class CityList extends AppCompatActivity {
         Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show();
         Cursor newCursor = weatherDb.query("WeatherNow", null, null, null, null);
         listCites(newCursor);
-
     }
 
     @Override  // 用于响应AddCityActivity的跳转回复

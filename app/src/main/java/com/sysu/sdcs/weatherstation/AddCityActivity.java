@@ -46,18 +46,15 @@ public class AddCityActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addcity);
 
-//        HeConfig.init("HE2007222112481749", "a737d0e84c084b84ba41b547cf25b98a");
-//        HeConfig.switchToDevService();
-        //HeConfig.init(""); //("@string/PublicId", "@string/AppKey");
 
         weatherDb = new WeatherDB(this);
         context = this;
-        lis = new ArrayList<GeoBean.LocationBean>();
+        lis = new ArrayList<>();
         mSearchView = (SearchView) findViewById(R.id.searchView);
         mSearchView.setIconifiedByDefault(false);
         mListView = (ListView) findViewById(R.id.searchlistView);
-        mStrs = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mStrs);
+        mStrs = new ArrayList<>();
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mStrs);
         mListView.setAdapter(adapter);
         mListView.setTextFilterEnabled(true);
 
