@@ -212,6 +212,10 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 Intent intent1 = new Intent(MainActivity.this, CityList.class);
                 startActivity(intent1);
                 break;
+            case R.id.action_login_register:
+                Intent intent2 = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent2);
+                break;
             case R.id.action_quit:
                 finish();
                 break;
@@ -473,9 +477,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         return mainActivity;
     }
 
-    public void setCurrentCity(String cityID) {
+    public void setCurrentCity(int idx) {
         // 用于其他页面更新当前城市的接口
-        int idx = (new Cities()).getIdx(cityID);
         Spinner spinner = findViewById(R.id.city_name_spinner);
         spinner.setSelection(idx, true);
     }

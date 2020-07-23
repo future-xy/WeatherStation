@@ -44,6 +44,9 @@ public class CityList extends AppCompatActivity {
         }
     };
 
+    public CityList() {
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,7 +152,14 @@ public class CityList extends AppCompatActivity {
     // 设置为当前城市
     private void setCurrentCity(SimWea city) {
         String id = city.getID();
-        MainActivity.getMainActivity().setCurrentCity(id);
+        int idx = (new Cities()).getIdx(id);
+        if(idx>=0) {
+            MainActivity.getMainActivity().setCurrentCity(idx);
+            Toast.makeText(getApplicationContext(), "修改成功", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "无当前城市信息", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override  // 用于响应AddCityActivity的跳转回复
