@@ -1,6 +1,6 @@
 package com.sysu.sdcs.weatherstation;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -32,8 +32,8 @@ public class CityList extends AppCompatActivity {
     private WeatherDB weatherDb;
     private ListView lv;
     private ArrayList<SimWea> weas;
-    private Context context;
 
+    @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -43,9 +43,6 @@ public class CityList extends AppCompatActivity {
             }
         }
     };
-
-    public CityList() {
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,8 +125,6 @@ public class CityList extends AppCompatActivity {
                             case R.id.del:
                                 delCity(tmp);
                                 break;
-                            case R.id.set_cur_city:
-                                setCurrentCity(tmp);
                             default:
                                 break;
                         }
@@ -150,21 +145,6 @@ public class CityList extends AppCompatActivity {
         Cursor newCursor = weatherDb.query("WeatherNow", null, null, null, null);
         listCites(newCursor);
         MainActivity.city_names.remove(city.getCity());
-    }
-
-    // 设置为当前城市
-    private void setCurrentCity(SimWea city) {
-        String id = city.getID();
-        Cities cities = new Cities();
-        int idx = cities.getIdx(id);
-        String name = cities.getCitynames()[idx];
-        if(idx>=0) {
-            MainActivity.getMainActivity().setCurrentCity(name);
-            Toast.makeText(getApplicationContext(), "修改成功", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Toast.makeText(getApplicationContext(), "无当前城市信息", Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override  // 用于响应AddCityActivity的跳转回复

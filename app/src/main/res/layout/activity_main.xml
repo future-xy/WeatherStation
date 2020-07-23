@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
+        android:gravity="end"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
@@ -70,24 +70,27 @@
 
             </TextView>
 
+
             <TextView
                 android:id="@+id/relative_humility"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/weatherpic"
                 android:layout_alignParentEnd="true"
+                android:layout_marginTop="29dp"
+                android:layout_marginEnd="4dp"
                 android:gravity="end"
                 android:paddingTop="20dp"
                 android:paddingEnd="50dp"
                 android:text=""
                 android:textSize="20sp" />
 
-
             <ImageView
                 android:id="@+id/weatherpic"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="65dp"
+                android:layout_marginTop="45dp"
                 android:layout_toEndOf="@+id/temperature"
                 android:background="@drawable/loading_icon"
                 android:contentDescription="天气" />
@@ -118,20 +121,20 @@
                 android:layout_below="@+id/daily"
                 android:paddingTop="50dp"
                 android:text="空气质量"
-                android:textSize="20sp"></TextView>
+                android:textSize="20sp" />
 
             <com.github.lzyzsd.circleprogress.ArcProgress
                 android:id="@+id/arc_progress"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
                 android:layout_below="@+id/quality_title"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="75dp"
                 android:visibility="invisible"
                 app:arc_bottom_text="优"
                 app:arc_bottom_text_size="20sp"
                 app:arc_max="180"
                 app:arc_progress="50"
-                app:arc_suffix_text=" "></com.github.lzyzsd.circleprogress.ArcProgress>
+                app:arc_suffix_text=" " />
 
 
             <TextView
@@ -201,7 +204,7 @@
 
             <com.sysu.sdcs.weatherstation.SunriseView
                 android:id="@+id/sun"
-                android:layout_width="400dp"
+                android:layout_width="350dp"
                 android:layout_height="100dp"
                 android:layout_below="@id/sunrise_sunset"
                 android:layout_marginTop="50dp" />
@@ -211,8 +214,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/sun"
+                android:paddingStart="20dp"
                 android:text="06:00"
-                android:textSize="20sp"></TextView>
+                android:paddingBottom="50dp"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/sunset_time"
@@ -220,9 +225,11 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/sun"
                 android:layout_toEndOf="@+id/sunrise_time"
-                android:gravity="right"
+                android:paddingEnd="20dp"
+                android:paddingBottom="50dp"
+                android:gravity="end"
                 android:text="19:00"
-                android:textSize="20sp"></TextView>
+                android:textSize="20sp" />
 
         </RelativeLayout>
 
