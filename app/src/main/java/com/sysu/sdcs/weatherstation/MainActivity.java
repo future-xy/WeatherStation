@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private String defaultCity = "广州";//默认城市
     private VerticalView verticalView;
     private RightLargeView rightLargeView;
+    private static MainActivity mainActivity;
     //临时存储天气
     private WeatherNowBean.NowBaseBean nowBaseBean;
     private List<DailyBean> _15DBean;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mainActivity = this;
         /*
         太丑了，感觉没必要
         ActionBar actionBar = getSupportActionBar();
@@ -290,6 +292,10 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             case R.id.action_city_list:
                 Intent intent1 = new Intent(MainActivity.this, CityList.class);
                 startActivity(intent1);
+                break;
+            case R.id.action_login_register:
+                Intent intent2 = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent2);
                 break;
             case R.id.action_quit:
                 finish();
@@ -624,5 +630,18 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         else if (rain <= 90)
             return "暴雨";
         return "特大暴雨";
+    }
+
+    public static MainActivity getMainActivity() {
+        // 返回当前实例
+        // edited by gjn
+        return mainActivity;
+    }
+
+    public void setCurrentCity(String name) {
+        // 用于其他页面更新当前城市的接口
+        Spinner spinner = findViewById(R.id.city_name_spinner);
+        int idx = city_names.indexOf(name);
+        spinner.setSelection(idx, true);
     }
 }

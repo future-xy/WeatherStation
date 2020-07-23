@@ -18,6 +18,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
+        <activity android:name=".RegisterActivity"
+            android:label="RegisterActivity"
+            android:parentActivityName="com.sysu.sdcs.weatherstation.LoginActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sysu.sdcs.weatherstation.LoginActivity" />
+        </activity>
+        <activity android:name=".LoginActivity"
+            android:label="LoginActivity"
+            android:parentActivityName="com.sysu.sdcs.weatherstation.MainActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sysu.sdcs.weatherstation.MainActivity" />
+        </activity>
         <activity
             android:name=".CityList"
             android:label="@string/title_activity_city_list"
@@ -28,6 +44,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="com.example.startact.SECONDACT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

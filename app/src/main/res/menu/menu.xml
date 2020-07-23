@@ -11,6 +11,10 @@
         android:title="城市列表"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_login_register"
+        android:title="登录与注册"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_quit"
         android:icon="@mipmap/ic_launcher"
         android:orderInCategory="100"

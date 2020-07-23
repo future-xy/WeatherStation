@@ -23,7 +23,7 @@ class DBOpenHandler extends SQLiteOpenHelper {
                 + "WindScale text, Humidity interger, Precip Int, Vis Int, AirBean text, DayBean text, modified_time timestamp)");
         db.execSQL("CREATE TABLE WeatherDaily(LocationID text primary key, Status text,"
                 + "modified_time timestamp)");
-        db.execSQL("CREATE TABLE UserInfo(Name text primary key, Password text,"
+        db.execSQL("CREATE TABLE UserInfo(Name text primary key, Password text, Picture blob, "
                 + "modified_time timestamp)");
     }
 
@@ -39,4 +39,3 @@ class DBOpenHandler extends SQLiteOpenHelper {
 //
     }
 }
-
