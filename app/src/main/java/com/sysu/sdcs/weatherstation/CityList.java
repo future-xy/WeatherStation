@@ -78,7 +78,7 @@ public class CityList extends AppCompatActivity {
                 SimWea tmp = new SimWea();
                 tmp.setID(cursor.getString(cursor.getColumnIndex("LocationID")));
                 tmp.setCity(cursor.getString(cursor.getColumnIndex("City")));
-                tmp.setTemp(cursor.getInt(cursor.getColumnIndex("Temperature")));
+                tmp.setTemp(cursor.getString(cursor.getColumnIndex("Temperature")));
                 //tmp.setText(cursor.getString(cursor.getColumnIndex("Text")));
                 weas.add(tmp);
             }
@@ -151,9 +151,9 @@ public class CityList extends AppCompatActivity {
                 public void run() {
                     try {
                         // 刷新城市列表，等待API调用完毕
-                        for (int i = 0; i < 5; i++) {
+                        for (int i = 0; i < 20; i++) {
                             handler.sendEmptyMessage(0x123);
-                            Thread.sleep(500);
+                            Thread.sleep(100);
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();

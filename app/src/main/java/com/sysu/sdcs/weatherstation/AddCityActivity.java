@@ -66,6 +66,13 @@ public class AddCityActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 GeoBean.LocationBean tmp = lis.get(position);
+                // 先直接插入城市
+                ContentValues cv = new ContentValues();
+                cv.put("LocationID", tmp.getId());
+                cv.put("City", tmp.getName());
+                cv.put("Temperature", "--");
+                weatherDb.insert("WeatherNow", cv);
+                // 更新城市温度
                 getTempandInsert(tmp.getId(), tmp.getName());
                 Intent data = new Intent();
                 //resultCode是返回码,用来确定是哪个页面传来的数据，这里设置返回码是2
@@ -124,6 +131,7 @@ public class AddCityActivity extends AppCompatActivity {
     // 获取所选城市温度，插入数据库
     private void getTempandInsert(final String lid, final String name) {
         final String[] temperature = new String[1];
+        // 调用查询实况天气API
         HeWeather.getWeatherNow(this, lid, Lang.ZH_HANS, Unit.METRIC, new HeWeather.OnResultWeatherNowListener() {
             @Override
             public void onError(Throwable e) {
@@ -142,7 +150,7 @@ public class AddCityActivity extends AppCompatActivity {
                     cv.put("LocationID", lid);
                     cv.put("City", name);
                     cv.put("Temperature", temperature[0]);
-                    weatherDb.insert("WeatherNow", cv);
+                    weatherDb.update("WeatherNow", cv, "LocationID=?", new String[]{lid});
 
                 } else {
                     //在此查看返回数据失败的原因
