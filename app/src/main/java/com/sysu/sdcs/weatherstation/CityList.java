@@ -155,9 +155,11 @@ public class CityList extends AppCompatActivity {
     // 设置为当前城市
     private void setCurrentCity(SimWea city) {
         String id = city.getID();
-        int idx = (new Cities()).getIdx(id);
+        Cities cities = new Cities();
+        int idx = cities.getIdx(id);
+        String name = cities.getCitynames()[idx];
         if(idx>=0) {
-            MainActivity.getMainActivity().setCurrentCity(idx);
+            MainActivity.getMainActivity().setCurrentCity(name);
             Toast.makeText(getApplicationContext(), "修改成功", Toast.LENGTH_SHORT).show();
         }
         else {

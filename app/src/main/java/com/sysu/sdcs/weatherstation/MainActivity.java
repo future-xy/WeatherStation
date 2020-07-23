@@ -569,9 +569,10 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         return mainActivity;
     }
 
-    public void setCurrentCity(int idx) {
+    public void setCurrentCity(String name) {
         // 用于其他页面更新当前城市的接口
         Spinner spinner = findViewById(R.id.city_name_spinner);
+        int idx = city_names.indexOf(name);
         spinner.setSelection(idx, true);
     }
 }
