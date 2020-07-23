@@ -1,5 +1,6 @@
 package com.sysu.sdcs.weatherstation;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -352,18 +353,20 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         } else {
             weatherL = rainL;
         }
+        weatherL=nowBaseBean.getText();
         weather1.setText(weatherL);
+
         ImageView weatherPic = findViewById(R.id.weatherpic);
-        /*
-        JUST FOR TEST!!!
-        DELETE IT!!!
-         */
-        String[] testWweather = new String[]{"小雨", "中雨", "大雨", "暴雨", "阴", "多云", "晴"};
-        Random random = new Random();
-        weatherL = testWweather[(random.nextInt() % testWweather.length + testWweather.length) % testWweather.length];
-        /*
-        TEST END
-         */
+//        /*
+//        JUST FOR TEST!!!
+//        DELETE IT!!!
+//         */
+//        String[] testWweather = new String[]{"小雨", "中雨", "大雨", "暴雨", "阴", "多云", "晴"};
+//        Random random = new Random();
+//        weatherL = testWweather[(random.nextInt() % testWweather.length + testWweather.length) % testWweather.length];
+//        /*
+//        TEST END
+//         */
         switch (weatherL) {
             case "小雨":
                 weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_smallrain));
@@ -396,6 +399,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     }
 
     //更新空气信息
+    @SuppressLint("SetTextI18n")
     boolean updateAir() {
         String unit = "μg/m³";
         int quality = Integer.parseInt(nowAirBean.getAqi());
@@ -463,5 +467,11 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         else if (rain <= 90)
             return "暴雨";
         return "特大暴雨";
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("main","ret");
     }
 }

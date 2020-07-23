@@ -70,24 +70,27 @@
 
             </TextView>
 
+
             <TextView
                 android:id="@+id/relative_humility"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/weatherpic"
                 android:layout_alignParentEnd="true"
+                android:layout_marginTop="29dp"
+                android:layout_marginEnd="4dp"
                 android:gravity="end"
                 android:paddingTop="20dp"
                 android:paddingEnd="50dp"
                 android:text=""
                 android:textSize="20sp" />
 
-
             <ImageView
                 android:id="@+id/weatherpic"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="92dp"
+                android:layout_marginTop="45dp"
                 android:layout_toEndOf="@+id/temperature"
                 android:background="@drawable/loading_icon"
                 android:contentDescription="天气" />

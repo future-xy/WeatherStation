@@ -1,5 +1,6 @@
 package com.sysu.sdcs.weatherstation;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class CityList extends AppCompatActivity {
     private ListView lv;
     private ArrayList<SimWea> weas;
 
+    @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
