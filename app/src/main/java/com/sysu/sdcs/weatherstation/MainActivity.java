@@ -325,10 +325,9 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                     if (Code.OK.getCode().equalsIgnoreCase(airNowBean.getCode())) {
                         nowAirBean = airNowBean.getNow();
                         ContentValues cv = new ContentValues();
-                        cv.put("LocationID", cityID);
-                        cv.put("BeanAir", new Gson().toJson(nowAirBean));
+                        cv.put("AirBean", new Gson().toJson(nowAirBean));
                         Log.d(TAG, new Gson().toJson(nowAirBean));
-                        long ret = db.replace("WeatherNow", String.format("LocationID=%s", cityID), cv);
+                        long ret = db.update("WeatherNow", cv, String.format("LocationID=%s", cityID), null);
                         Log.d(TAG, "onSuccess: " + ret);
                         handler.sendEmptyMessage(25);
                     } else {
@@ -360,6 +359,16 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             } else {
                 Log.d(TAG, "NO 15 data");
             }
+            cursor = db.query("WeatherNow", new String[]{"AirBean"}, "LocationID=?", new String[]{cityID}, null, null, null);
+            if (cursor != null)
+                while (cursor.moveToNext()) {
+                    String s = cursor.getString(cursor.getColumnIndex("AirBean"));
+                    if (s != null)
+                        Log.d(TAG, s);
+                    else
+                        Log.d(TAG, "SSS");
+                }
+
             cursor = db.query("WeatherNow", new String[]{"AirBean", "DayBean"}, "LocationID=?", new String[]{cityID}, null, null, null);
             if (cursor != null) {
                 while (cursor.moveToNext()) {
