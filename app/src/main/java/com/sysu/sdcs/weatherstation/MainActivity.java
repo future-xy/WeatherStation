@@ -470,14 +470,16 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
     //更新15天天气
     boolean update15Days() {
-        List<Integer> data = new ArrayList<>();
+        List<Integer> maxData = new ArrayList<>();
+        List<Integer> minData = new ArrayList<>();
         List<String> days = new ArrayList<>();
         for (DailyBean dailyBean : _15DBean) {
-            data.add(Integer.valueOf(dailyBean.getTempMax()));
+            maxData.add(Integer.valueOf(dailyBean.getTempMax()));
+            minData.add(Integer.valueOf(dailyBean.getTempMin()));
             String date = dailyBean.getFxDate();
             days.add(date.split("-", 2)[1]);
         }
-        Hour_Adapter adapter = new Hour_Adapter(this, data, days);
+        Hour_Adapter adapter = new Hour_Adapter(this, maxData, minData, days);
         recyclerView.setAdapter(adapter);
 
         TextView sunriseTime = findViewById(R.id.sunrise_time);

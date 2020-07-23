@@ -1,14 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="wrap_content"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:gravity="center_horizontal"-->
+<!--    android:orientation="vertical">-->
+
+<!--    <com.sysu.sdcs.weatherstation.TemperatureView-->
+<!--        android:id="@+id/temp_view"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content">-->
+
+<!--    </com.sysu.sdcs.weatherstation.TemperatureView>-->
+<!--</LinearLayout>-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
     <com.sysu.sdcs.weatherstation.TemperatureView
-        android:id="@+id/temp_view"
+        android:id="@+id/temp_view_max"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content" />
 
-    </com.sysu.sdcs.weatherstation.TemperatureView>
-</LinearLayout>
+    <com.sysu.sdcs.weatherstation.TemperatureView
+        android:id="@+id/temp_view_min"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</FrameLayout>
