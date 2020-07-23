@@ -6,9 +6,9 @@
         android:title="卫星云图"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_city_list"
         android:icon="@drawable/ic_location"
-        android:title="当前城市"
+        android:title="城市列表"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_quit"

@@ -1,17 +1,12 @@
 package com.sysu.sdcs.weatherstation;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,8 +29,6 @@ import com.google.gson.Gson;
 import com.heweather.plugin.view.HeWeatherConfig;
 import com.heweather.plugin.view.RightLargeView;
 import com.heweather.plugin.view.VerticalView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -203,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         return super.onCreateOptionsMenu(menu);
     }
 
+    //Action Bar
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -210,7 +206,9 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 Intent intent = new Intent(MainActivity.this, CloudGraphActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.action_settings:
+            case R.id.action_city_list:
+                Intent intent1 = new Intent(MainActivity.this, CityList.class);
+                startActivity(intent1);
                 break;
             case R.id.action_quit:
                 finish();

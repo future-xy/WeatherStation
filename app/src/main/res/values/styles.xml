@@ -8,10 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-<!--    <style name="AppTheme.NoActionBar">-->
-<!--        <item name="windowActionBar">false</item>-->
-<!--        <item name="windowNoTitle">true</item>-->
-<!--    </style>-->
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
     <style name="WeatherDetailCurrentTemperatureStyle">
         <item name="android:textColor">@color/colorWhiteDarkText</item>
@@ -56,18 +56,30 @@
         <item name="android:paddingVertical">10dp</item>
         <item name="android:paddingStart">10dp</item>
     </style>
+
     <style name="RowItemRight" parent="RowItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:gravity">right</item>
         <item name="android:paddingStart">0dp</item>
 
     </style>
+
     <style name="RowItemTop" parent="RowItem">
         <item name="android:layout_marginTop">50dp</item>
     </style>
+
     <style name="RowItemTopRight" parent="RowItemTop">
         <item name="android:layout_width">match_parent</item>
         <item name="android:gravity">right</item>
         <item name="android:paddingStart">0dp</item>
     </style>
+
+    <style name="NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
