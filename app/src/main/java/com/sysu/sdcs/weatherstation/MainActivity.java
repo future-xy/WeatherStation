@@ -1,7 +1,9 @@
 package com.sysu.sdcs.weatherstation;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
@@ -21,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -34,12 +37,10 @@ import com.heweather.plugin.view.HeWeatherConfig;
 import com.heweather.plugin.view.RightLargeView;
 import com.heweather.plugin.view.VerticalView;
 
-import java.lang.reflect.GenericSignatureFormatError;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
 import interfaces.heweather.com.interfacesmodule.bean.air.AirNowBean;
 import interfaces.heweather.com.interfacesmodule.bean.base.Code;
@@ -235,9 +236,39 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 Intent intent1 = new Intent(MainActivity.this, CityList.class);
                 startActivity(intent1);
                 break;
-            case R.id.action_login_register:
-                Intent intent2 = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent2);
+            case R.id.action_setting:
+                //loginInfo表示文件名  SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
+                SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
+                //获取编辑器
+                SharedPreferences.Editor editor=sp.edit();
+                //查看登录状态
+                if(sp.getBoolean("isLogin", false)) {
+                    // 已经登录
+                    Intent intent2 = new Intent(MainActivity.this, SettingActivity.class);
+                    startActivity(intent2);
+                }
+                else {
+                    // 未登录，跳转到登录页面
+                    //创建dialog构造器
+                    AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
+                    //设置title
+                    normalDialog.setTitle("尚未登录");
+                    //设置icon
+                    normalDialog.setIcon(R.mipmap.ic_launcher_round);
+                    //设置内容
+                    normalDialog.setMessage("请先进行登录！");
+                    //设置按钮
+                    normalDialog.setPositiveButton("确定"
+                            , new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent3 = new Intent(MainActivity.this, LoginActivity.class);
+                                    startActivity(intent3);
+                                    dialog.dismiss();
+                                }
+                    });
+                    normalDialog.show();
+                }
                 break;
             case R.id.action_quit:
                 finish();

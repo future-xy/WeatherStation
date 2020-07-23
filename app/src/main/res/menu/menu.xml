@@ -11,8 +11,8 @@
         android:title="城市列表"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_login_register"
-        android:title="登录与注册"
+        android:id="@+id/action_setting"
+        android:title="用户中心"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_quit"
