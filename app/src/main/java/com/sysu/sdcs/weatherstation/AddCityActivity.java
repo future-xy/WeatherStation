@@ -46,18 +46,15 @@ public class AddCityActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addcity);
 
-//        HeConfig.init("HE2007222112481749", "a737d0e84c084b84ba41b547cf25b98a");
-//        HeConfig.switchToDevService();
-        //HeConfig.init(""); //("@string/PublicId", "@string/AppKey");
 
         weatherDb = new WeatherDB(this);
         context = this;
-        lis = new ArrayList<GeoBean.LocationBean>();
-        mSearchView = (SearchView) findViewById(R.id.searchView);
+        lis = new ArrayList<>();
+        mSearchView = findViewById(R.id.searchView);
         mSearchView.setIconifiedByDefault(false);
-        mListView = (ListView) findViewById(R.id.searchlistView);
-        mStrs = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mStrs);
+        mListView = findViewById(R.id.searchlistView);
+        mStrs = new ArrayList<>();
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mStrs);
         mListView.setAdapter(adapter);
         mListView.setTextFilterEnabled(true);
 
@@ -151,7 +148,9 @@ public class AddCityActivity extends AppCompatActivity {
                     cv.put("City", name);
                     cv.put("Temperature", temperature[0]);
                     weatherDb.update("WeatherNow", cv, "LocationID=?", new String[]{lid});
-
+                    if (!MainActivity.city_names.contains(name)) {
+                        MainActivity.city_names.add(name);
+                    }
                 } else {
                     //在此查看返回数据失败的原因
                     String status = weatherBean.getCode();
