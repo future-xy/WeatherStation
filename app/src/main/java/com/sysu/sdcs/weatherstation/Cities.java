@@ -1,5 +1,6 @@
 package com.sysu.sdcs.weatherstation;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,4 +52,6 @@ public class Cities {
     public String[] getCodes() {
         return codes;
     }
+
+    public int getIdx(String code) { return Arrays.binarySearch(codes, code); }
 }

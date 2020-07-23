@@ -1,5 +1,6 @@
 package com.sysu.sdcs.weatherstation;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ public class CityList extends AppCompatActivity {
     private WeatherDB weatherDb;
     private ListView lv;
     private ArrayList<SimWea> weas;
+    private Context context;
 
     Handler handler = new Handler() {
         @Override
@@ -120,6 +122,8 @@ public class CityList extends AppCompatActivity {
                             case R.id.del:
                                 delCity(tmp);
                                 break;
+                            case R.id.set_cur_city:
+                                setCurrentCity(tmp);
                             default:
                                 break;
                         }
@@ -140,6 +144,12 @@ public class CityList extends AppCompatActivity {
         Cursor newCursor = weatherDb.query("WeatherNow", null, null, null, null);
         listCites(newCursor);
 
+    }
+
+    // 设置为当前城市
+    private void setCurrentCity(SimWea city) {
+        String id = city.getID();
+        MainActivity.getMainActivity().setCurrentCity(id);
     }
 
     @Override  // 用于响应AddCityActivity的跳转回复
