@@ -267,8 +267,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                         //插入数据到数据库
                         ContentValues cv = new ContentValues();
                         cv.put("LocationID", cityID);
-                        cv.put("City", cityName);
-                        cv.put("Temperature", nowBaseBean.getTemp());
+                        cv.put("DayBean", new Gson().toJson(nowBaseBean));
                         db.replace("WeatherNow", String.format("LocationID=%s", cityID), cv);
 
                         handler.sendEmptyMessage(0);
@@ -326,8 +325,11 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                     if (Code.OK.getCode().equalsIgnoreCase(airNowBean.getCode())) {
                         nowAirBean = airNowBean.getNow();
                         ContentValues cv = new ContentValues();
-                        cv.put("Air", new Gson().toJson(nowAirBean));
-                        db.replace("WeatherNow", String.format("LocationID=%s", cityID), cv);
+                        cv.put("LocationID", cityID);
+                        cv.put("BeanAir", new Gson().toJson(nowAirBean));
+                        Log.d(TAG, new Gson().toJson(nowAirBean));
+                        long ret = db.replace("WeatherNow", String.format("LocationID=%s", cityID), cv);
+                        Log.d(TAG, "onSuccess: " + ret);
                         handler.sendEmptyMessage(25);
                     } else {
                         //在此查看返回数据失败的原因
@@ -340,25 +342,47 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         } else {
             Log.d(TAG, "No Net!!!");
             //从数据库中读取缓存数据
-            Cursor cursor = db.query("WeatherDaily", new String[]{"LocationID", "Status"}, "LocationID=?", new String[]{cityID}, null, null, null);
-//            Cursor cursor = db.query("WeatherDaily", new String[]{"LocationID", "Status"}, null, null, null, null, null);
-            Log.d(TAG, String.format("LocationID=%s", cityID));
+            //15天数据
+            Cursor cursor = db.query("WeatherDaily", new String[]{"Status"}, "LocationID=?", new String[]{cityID}, null, null, null);
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    Log.d(TAG, "111");
                     Type collectionType = new TypeToken<List<DailyBean>>() {
                     }.getType();
-                    String location = cursor.getString(cursor.getColumnIndex("LocationID"));
                     String jsonString = cursor.getString(cursor.getColumnIndex("Status"));
                     _15DBean = new Gson().fromJson(jsonString, collectionType);
-                    Log.d(TAG, location);
                 }
-                sunriseToday = _15DBean.get(0).getSunrise();
-                sunsetToday = _15DBean.get(0).getSunset();
-                update15Days();
+                if (_15DBean != null) {
+                    sunriseToday = _15DBean.get(0).getSunrise();
+                    sunsetToday = _15DBean.get(0).getSunset();
+                    update15Days();
+                }
                 cursor.close();
             } else {
-                Log.d(TAG, "NO data");
+                Log.d(TAG, "NO 15 data");
+            }
+            cursor = db.query("WeatherNow", new String[]{"AirBean", "DayBean"}, "LocationID=?", new String[]{cityID}, null, null, null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    Type airBean = new TypeToken<AirNowBean.NowBean>() {
+                    }.getType();
+                    Type nowBean = new TypeToken<WeatherNowBean.NowBaseBean>() {
+                    }.getType();
+                    String airString = cursor.getString(cursor.getColumnIndex("AirBean"));
+                    Log.d(TAG, "AIR");
+                    if (airString == null)
+                        Log.d(TAG, "NULLAIR");
+                    String nowString = cursor.getString(cursor.getColumnIndex("DayBean"));
+                    nowBaseBean = new Gson().fromJson(nowString, nowBean);
+                    nowAirBean = new Gson().fromJson(airString, airBean);
+                }
+                if (nowAirBean != null)
+                    updateAir();
+                if (nowBaseBean != null) {
+                    updateMain();
+                }
+                cursor.close();
+            } else {
+                Log.d(TAG, "NO now data");
             }
         }
 
@@ -394,6 +418,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
     //首页天气在这里更新
     boolean updateMain() {
+        Log.d(TAG, new Gson().toJson(nowBaseBean));
         //即时温度
         temperature = findViewById(R.id.temperature);
         temperature.setText(String.format("%s℃", nowBaseBean.getTemp()));
