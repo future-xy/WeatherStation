@@ -4,12 +4,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,16 +15,18 @@ public class Hour_Adapter extends RecyclerView.Adapter<Hour_Adapter.Hour_Holder>
 
     private static final String TAG = "Hour_Adapter";
     private Context mContext;
-    private List<Integer> data;
+    private List<Integer> maxData;
+    private List<Integer> minData;
     private List<String> days;
     private int minValue;
     private int maxValue;
 
-    public Hour_Adapter(Context context, List<Integer> data, List<String> days) {
-        this.data = data;
+    public Hour_Adapter(Context context, List<Integer> maxData, List<Integer> minData, List<String> days) {
+        this.maxData = maxData;
+        this.minData = minData;
         this.days = days;
-        minValue = Collections.min(data);
-        maxValue = Collections.max(data);
+        minValue = Collections.min(minData);
+        maxValue = Collections.max(maxData);
         mContext = context;
     }
 
@@ -42,43 +42,62 @@ public class Hour_Adapter extends RecyclerView.Adapter<Hour_Adapter.Hour_Holder>
 
         //如果是第一个
         if (i == 0) {
-            hour_holder.mTemperatureView.setDrawLeftLine(false);
+            hour_holder.mTemperatureViewMax.setDrawLeftLine(false);
+            hour_holder.mTemperatureViewMin.setDrawLeftLine(false);
         }
         //除第一个以外
         else {
-            hour_holder.mTemperatureView.setDrawLeftLine(true);
-            hour_holder.mTemperatureView.setLastValue(data.get(i - 1));
+            hour_holder.mTemperatureViewMax.setDrawLeftLine(true);
+            hour_holder.mTemperatureViewMax.setLastValue(maxData.get(i - 1));
+
+            hour_holder.mTemperatureViewMin.setDrawLeftLine(true);
+            hour_holder.mTemperatureViewMin.setLastValue(minData.get(i - 1));
         }
 
         //如果是最后一个
-        if (i == data.size() - 1) {
-            hour_holder.mTemperatureView.setDrawRightLine(false);
+        if (i == maxData.size() - 1) {
+            hour_holder.mTemperatureViewMax.setDrawRightLine(false);
+            hour_holder.mTemperatureViewMin.setDrawRightLine(false);
         }
         //除最后一个以外
         else {
-            hour_holder.mTemperatureView.setDrawRightLine(true);
-            hour_holder.mTemperatureView.setNextValue(data.get(i + 1));
+            hour_holder.mTemperatureViewMax.setDrawRightLine(true);
+            hour_holder.mTemperatureViewMax.setNextValue(maxData.get(i + 1));
+
+            hour_holder.mTemperatureViewMin.setDrawRightLine(true);
+            hour_holder.mTemperatureViewMin.setNextValue(minData.get(i + 1));
         }
 
-        hour_holder.mTemperatureView.setCurrentValue(data.get(i));
-        hour_holder.mTemperatureView.setCurrentDay(days.get(i));
+        hour_holder.mTemperatureViewMax.setCurrentValue(maxData.get(i));
+        hour_holder.mTemperatureViewMax.setCurrentDay(days.get(i));
+
+        hour_holder.mTemperatureViewMin.setCurrentValue(minData.get(i));
+        hour_holder.mTemperatureViewMin.setCurrentDay("");
 
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return maxData.size();
     }
 
     class Hour_Holder extends RecyclerView.ViewHolder {
 
-        private TemperatureView mTemperatureView;
+        private TemperatureView mTemperatureViewMax;
+        private TemperatureView mTemperatureViewMin;
 
         public Hour_Holder(@NonNull View itemView) {
             super(itemView);
-            mTemperatureView = itemView.findViewById(R.id.temp_view);
-            mTemperatureView.setMinValue(minValue);
-            mTemperatureView.setMaxValue(maxValue);
+            mTemperatureViewMax = itemView.findViewById(R.id.temp_view_max);
+            mTemperatureViewMax.setMinValue(minValue);
+            mTemperatureViewMax.setMaxValue(maxValue);
+            mTemperatureViewMax.setColor("#FF2014");
+            mTemperatureViewMax.setyBias(-20);
+            mTemperatureViewMin = itemView.findViewById(R.id.temp_view_min);
+            mTemperatureViewMin.setMinValue(minValue);
+            mTemperatureViewMin.setMaxValue(maxValue);
+            mTemperatureViewMin.setColor("#1480ff");
+            mTemperatureViewMin.setyBias(50);
         }
     }
 

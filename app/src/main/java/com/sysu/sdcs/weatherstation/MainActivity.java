@@ -1,11 +1,13 @@
 package com.sysu.sdcs.weatherstation;
 
+import android.Manifest;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -21,11 +23,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,15 +40,18 @@ import com.heweather.plugin.view.HeWeatherConfig;
 import com.heweather.plugin.view.RightLargeView;
 import com.heweather.plugin.view.VerticalView;
 
+import java.lang.reflect.GenericSignatureFormatError;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 import interfaces.heweather.com.interfacesmodule.bean.air.AirNowBean;
 import interfaces.heweather.com.interfacesmodule.bean.base.Code;
 import interfaces.heweather.com.interfacesmodule.bean.base.Lang;
 import interfaces.heweather.com.interfacesmodule.bean.base.Unit;
+import interfaces.heweather.com.interfacesmodule.bean.geo.GeoBean;
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean;
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherDailyBean.DailyBean;
 import interfaces.heweather.com.interfacesmodule.bean.weather.WeatherNowBean;
@@ -57,18 +63,22 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     private String HWID = "HE2007141352421044";
     private String HWKEY = "a6e621bd44ed41559b84f5450b42896c";
     private String APIKEY = "ff91402a13b144cf8ec6829df147c84f";
-    private String defaultCity = "广州";//默认城市
     private VerticalView verticalView;
     private RightLargeView rightLargeView;
     private static MainActivity mainActivity;
+
+    private String defaultCity = "广州";//默认城市
+    static boolean setDefault = false;
     //临时存储天气
     private WeatherNowBean.NowBaseBean nowBaseBean;
     private List<DailyBean> _15DBean;
     private AirNowBean.NowBean nowAirBean;
+    ArrayAdapter<String> arrayAdapter;
     //DB
     SQLiteDatabase db;
     final static ArrayList<String> city_names = new ArrayList<>();
     final Cities cities = new Cities();
+    LocationManager locationManager;
 
     final private Handler handler = new Handler(this);
     private RecyclerView recyclerView;
@@ -122,6 +132,38 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         HeConfig.init(HWID, HWKEY);//DATA SDK
         HeConfig.switchToDevService();//没有专业版,切换到开发者模式
 
+        if (!setDefault) {
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                String location = getLocation();
+                if (location.length() > 0) {
+                    HeWeather.getGeoCityLookup(MainActivity.this, location, new HeWeather.OnResultGeoListener() {
+                        @Override
+                        public void onError(Throwable throwable) {
+                            Log.i(TAG, "onError: " + throwable);
+                        }
+
+                        @Override
+                        public void onSuccess(GeoBean geoBean) {
+                            //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
+                            if (Code.OK.getCode().equalsIgnoreCase(geoBean.getStatus())) {
+                                List<GeoBean.LocationBean> locationBeans = geoBean.getLocationBean();
+                                defaultCity = locationBeans.get(0).getAdm2();
+                                Log.d(TAG, "onSuccess: " + defaultCity);
+                                handler.sendEmptyMessage(1);
+                                setDefault = true;
+                            } else {
+                                //在此查看返回数据失败的原因
+                                String status = geoBean.getStatus();
+                                Code code = Code.toEnum(status);
+                                Log.i("res", "failed code: " + code);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
         DBOpenHandler dbOpenHandler = new DBOpenHandler(this, "dbWeather.db3", null, 1);
         db = dbOpenHandler.getWritableDatabase();
         Cursor cursor = db.query("WeatherNow", new String[]{"City"}, null, null, null, null, null);
@@ -129,17 +171,17 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 String name = cursor.getString(cursor.getColumnIndex("City"));
-                if (name != null)
+                if (name != null && !city_names.contains(name))
                     city_names.add(name);
             }
             cursor.close();
         }
-        if (city_names.size() == 0)
-            city_names.add(defaultCity);
+//        if (city_names.size() == 0)
+//            city_names.add(defaultCity);
         Log.d(TAG, "onCreate: " + city_names.size());
 
         //通过Spinner切换城市，测试版
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, city_names);
+        arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, city_names);
         Spinner spinner = findViewById(R.id.city_name_spinner);
         spinner.setAdapter(arrayAdapter);
         spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
@@ -195,6 +237,22 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         return false;
     }
 
+    String getLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "getLocation: permission");
+            Toast.makeText(MainActivity.this, "请开启位置(GPS)权限", Toast.LENGTH_LONG).show();
+            return "";
+        }
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location != null) {
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            return longitude + "," + latitude;
+        }
+        Log.d(TAG, "getLocation: null");
+        return "";
+    }
+
 
     public void startSunAnim(int sunrise, int sunset) {
         Calendar calendar = Calendar.getInstance();
@@ -236,39 +294,9 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 Intent intent1 = new Intent(MainActivity.this, CityList.class);
                 startActivity(intent1);
                 break;
-            case R.id.action_setting:
-                //loginInfo表示文件名  SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
-                SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
-                //获取编辑器
-                SharedPreferences.Editor editor=sp.edit();
-                //查看登录状态
-                if(sp.getBoolean("isLogin", false)) {
-                    // 已经登录
-                    Intent intent2 = new Intent(MainActivity.this, SettingActivity.class);
-                    startActivity(intent2);
-                }
-                else {
-                    // 未登录，跳转到登录页面
-                    //创建dialog构造器
-                    AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
-                    //设置title
-                    normalDialog.setTitle("尚未登录");
-                    //设置icon
-                    normalDialog.setIcon(R.mipmap.ic_launcher_round);
-                    //设置内容
-                    normalDialog.setMessage("请先进行登录！");
-                    //设置按钮
-                    normalDialog.setPositiveButton("确定"
-                            , new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent3 = new Intent(MainActivity.this, LoginActivity.class);
-                                    startActivity(intent3);
-                                    dialog.dismiss();
-                                }
-                    });
-                    normalDialog.show();
-                }
+            case R.id.action_login_register:
+                Intent intent2 = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent2);
                 break;
             case R.id.action_quit:
                 finish();
@@ -442,14 +470,16 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
     //更新15天天气
     boolean update15Days() {
-        List<Integer> data = new ArrayList<>();
+        List<Integer> maxData = new ArrayList<>();
+        List<Integer> minData = new ArrayList<>();
         List<String> days = new ArrayList<>();
         for (DailyBean dailyBean : _15DBean) {
-            data.add(Integer.valueOf(dailyBean.getTempMax()));
+            maxData.add(Integer.valueOf(dailyBean.getTempMax()));
+            minData.add(Integer.valueOf(dailyBean.getTempMin()));
             String date = dailyBean.getFxDate();
             days.add(date.split("-", 2)[1]);
         }
-        Hour_Adapter adapter = new Hour_Adapter(this, data, days);
+        Hour_Adapter adapter = new Hour_Adapter(this, maxData, minData, days);
         recyclerView.setAdapter(adapter);
 
         TextView sunriseTime = findViewById(R.id.sunrise_time);
@@ -563,7 +593,19 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         } else if (msg.what == 25) {
             //如果获取到空气信息
             return updateAir();
+        } else if (msg.what == 1) {
+            //如果获取到用户位置
+            return updateDefault();
         } else return msg.what == 13;
+    }
+
+    boolean updateDefault() {
+        //更新default之后更新天气
+        if (!city_names.contains(defaultCity))
+            city_names.add(defaultCity);
+        getWeatherInfo(cities.getCode(defaultCity), defaultCity);
+        arrayAdapter.notifyDataSetChanged();
+        return true;
     }
 
 

@@ -25,8 +25,10 @@ public class TemperatureView extends View {
     private int pointY;
     private boolean isDrawLeftLine;
     private boolean isDrawRightLine;
-    private int pointTopY = (int) (80 * Util.getDensity(getContext()));
-    private int pointBottomY = (int) (200 * Util.getDensity(getContext()));
+    private String color;
+    private int yBias;
+    private int pointTopY = (int) (40 * Util.getDensity(getContext()));
+    private int pointBottomY = (int) (140 * Util.getDensity(getContext()));
     private int mMiddleValue;
 
     public TemperatureView(Context context) {
@@ -123,7 +125,7 @@ public class TemperatureView extends View {
         mPaint.setStrokeWidth(0);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(currentValue + "°", pointX, pointY - 20, mPaint);
+        canvas.drawText(currentValue + "°", pointX, pointY + yBias, mPaint);
     }
 
 
@@ -144,6 +146,7 @@ public class TemperatureView extends View {
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeWidth(3);
         mPaint.setAntiAlias(true);    //设置抗锯齿
+        mPaint.setColor(Color.parseColor(color));
 
         //判断是否画左线段（第一个View不用，其他全要）
         if (isDrawLeftLine) {
@@ -159,6 +162,14 @@ public class TemperatureView extends View {
             float middleY = mMiddleValue + (int) ((pointBottomY - pointTopY) * 1f / (maxValue - minValue) * ((maxValue + minValue) / 2 - middleValue));
             canvas.drawLine(pointX, pointY, viewWidth, middleY, mPaint);
         }
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public void setyBias(int yBias) {
+        this.yBias = yBias;
     }
 
 
