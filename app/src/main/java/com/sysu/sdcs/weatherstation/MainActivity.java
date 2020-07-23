@@ -27,9 +27,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.heweather.plugin.view.HeWeatherConfig;
 import com.heweather.plugin.view.RightLargeView;
 import com.heweather.plugin.view.VerticalView;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -473,5 +476,10 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     protected void onRestart() {
         super.onRestart();
         Log.d("main","ret");
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
     }
 }

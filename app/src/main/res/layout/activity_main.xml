@@ -125,10 +125,10 @@
 
             <com.github.lzyzsd.circleprogress.ArcProgress
                 android:id="@+id/arc_progress"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
                 android:layout_below="@+id/quality_title"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="75dp"
                 android:visibility="invisible"
                 app:arc_bottom_text="优"
                 app:arc_bottom_text_size="20sp"
@@ -204,7 +204,7 @@
 
             <com.sysu.sdcs.weatherstation.SunriseView
                 android:id="@+id/sun"
-                android:layout_width="400dp"
+                android:layout_width="350dp"
                 android:layout_height="100dp"
                 android:layout_below="@id/sunrise_sunset"
                 android:layout_marginTop="50dp" />
