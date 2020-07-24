@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        MainActivity.this.deleteDatabase("dbWeather.db3");
+        //MainActivity.this.deleteDatabase("dbWeather.db3");
         mainActivity = this;
         /*
         太丑了，感觉没必要
