@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WeatherApp</string>
+    <string name="app_name">天气屋</string>
     <string name="current_temperature_none">--°</string>
     <string name="temperature_range_none">-℃～-℃</string>
     <string name="location_none">--</string>
