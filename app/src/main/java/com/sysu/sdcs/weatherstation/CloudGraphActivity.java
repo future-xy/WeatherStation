@@ -54,15 +54,7 @@ public class CloudGraphActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cloud_graph);
         Calendar calendar = Calendar.getInstance();
-//        actionBar = getSupportActionBar();
-//        if (actionBar == null)
-//            Log.d("isNULL", "m");
-//        assert actionBar != null;
-//        actionBar.setDisplayShowHomeEnabled(true);
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        actionBar.setDisplayShowCustomEnabled(true);
-//        actionBar.setDisplayShowTitleEnabled(true);
-//        actionBar.setTitle(calendar.getTime().toLocaleString() + " " + getResources().getString(R.string.cloud_graph));
+
         Toolbar toolbar = findViewById(R.id.toolbar2);
         toolbar.setTitle(calendar.getTime().toLocaleString() + " " + getResources().getString(R.string.cloud_graph));
         setSupportActionBar(toolbar);

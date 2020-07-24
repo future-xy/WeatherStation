@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -82,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     final static ArrayList<String> city_names = new ArrayList<>();
     final Cities cities = new Cities();
     LocationManager locationManager;
-
     final private Handler handler = new Handler(this);
     private RecyclerView recyclerView;
     private TextView temperature;
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
         Toolbar mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitle("天气屋");
-        mToolbar.setSubtitle("测试版");
+        mToolbar.setSubtitle("正式版");
         mToolbar.inflateMenu(R.menu.menu);
         setSupportActionBar(mToolbar);
 
@@ -132,32 +132,13 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         if (!setDefault) {
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                String location = getLocation();
-                if (location.length() > 0) {
-                    HeWeather.getGeoCityLookup(MainActivity.this, location, new HeWeather.OnResultGeoListener() {
-                        @Override
-                        public void onError(Throwable throwable) {
-                            Log.i(TAG, "onError: " + throwable);
-                        }
-
-                        @Override
-                        public void onSuccess(GeoBean geoBean) {
-                            //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
-                            if (Code.OK.getCode().equalsIgnoreCase(geoBean.getStatus())) {
-                                List<GeoBean.LocationBean> locationBeans = geoBean.getLocationBean();
-                                defaultCity = locationBeans.get(0).getAdm2();
-                                Log.d(TAG, "onSuccess: " + defaultCity);
-                                handler.sendEmptyMessage(1);
-                                setDefault = true;
-                            } else {
-                                //在此查看返回数据失败的原因
-                                String status = geoBean.getStatus();
-                                Code code = Code.toEnum(status);
-                                Log.i("res", "failed code: " + code);
-                            }
-                        }
-                    });
-                }
+                Log.d(TAG, "onCreate: setting default");
+                setDefaultCity();
+            } else {
+                //没有GPS默认广州
+                defaultCity = "广州";
+                Log.d(TAG, "onCreate: default 广州");
+                handler.sendEmptyMessage(1);
             }
         }
 
@@ -209,6 +190,62 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         }
 
         return false;
+    }
+
+    void setDefaultCity() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED | ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "getLocation: permission");
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+                    Log.d(TAG, "getLocation: got permission");
+                    setDefaultCity();
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            });
+            return;
+        }
+
+        String location = getLocation();
+        Log.d(TAG, "setDefaultCity: " + location);
+        if (location.length() > 0) {
+            HeWeather.getGeoCityLookup(MainActivity.this, location, new HeWeather.OnResultGeoListener() {
+                @Override
+                public void onError(Throwable throwable) {
+                    Log.i(TAG, "onError: " + throwable);
+                }
+
+                @Override
+                public void onSuccess(GeoBean geoBean) {
+                    //先判断返回的status是否正确，当status正确时获取数据，若status不正确，可查看status对应的Code值找到原因
+                    if (Code.OK.getCode().equalsIgnoreCase(geoBean.getStatus())) {
+                        List<GeoBean.LocationBean> locationBeans = geoBean.getLocationBean();
+                        defaultCity = locationBeans.get(0).getAdm2();
+                        Log.d(TAG, "onSuccess: " + defaultCity);
+                        handler.sendEmptyMessage(1);
+                        setDefault = true;
+                    } else {
+                        //在此查看返回数据失败的原因
+                        String status = geoBean.getStatus();
+                        Code code = Code.toEnum(status);
+                        Log.i("res", "failed code: " + code);
+                    }
+                }
+            });
+        }
     }
 
     String getLocation() {
@@ -424,15 +461,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             } else {
                 Log.d(TAG, "NO 15 data");
             }
-            cursor = db.query("WeatherNow", new String[]{"AirBean"}, "LocationID=?", new String[]{cityID}, null, null, null);
-            if (cursor != null)
-                while (cursor.moveToNext()) {
-                    String s = cursor.getString(cursor.getColumnIndex("AirBean"));
-                    if (s != null)
-                        Log.d(TAG, s);
-                    else
-                        Log.d(TAG, "SSS");
-                }
 
             cursor = db.query("WeatherNow", new String[]{"AirBean", "DayBean"}, "LocationID=?", new String[]{cityID}, null, null, null);
             if (cursor != null) {
