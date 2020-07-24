@@ -4,10 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#EBE7E7"
+    android:orientation="vertical"
     tools:context=".SettingActivity">
-
 
 
     <androidx.appcompat.widget.Toolbar
@@ -16,8 +15,7 @@
         android:layout_height="wrap_content"
         android:gravity="right"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-    </androidx.appcompat.widget.Toolbar>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"></androidx.appcompat.widget.Toolbar>
 
     <ImageView
         android:id="@+id/user_picture"

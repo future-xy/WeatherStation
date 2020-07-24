@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     String getLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED | ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "getLocation: permission");
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             //Toast.makeText(MainActivity.this, "请开启位置(GPS)权限", Toast.LENGTH_LONG).show();
             return "";
         }
@@ -301,16 +301,15 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
                 break;
             case R.id.action_setting:
                 //loginInfo表示文件名  SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
-                SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
+                SharedPreferences sp = getSharedPreferences("loginInfo", MODE_PRIVATE);
                 //获取编辑器
-                SharedPreferences.Editor editor=sp.edit();
+                SharedPreferences.Editor editor = sp.edit();
                 //查看登录状态
-                if(sp.getBoolean("isLogin", false)) {
+                if (sp.getBoolean("isLogin", false)) {
                     // 已经登录
                     Intent intent2 = new Intent(MainActivity.this, SettingActivity.class);
                     startActivity(intent2);
-                }
-                else {
+                } else {
                     // 未登录，跳转到登录页面
                     //创建dialog构造器
                     AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);

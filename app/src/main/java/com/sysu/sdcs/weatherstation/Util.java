@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.WindowManager;
 
 public class Util {
-    final static String TAG = "UTIL";
 
     public static float getDensity(Context context) {
         DisplayMetrics metrics = new DisplayMetrics();

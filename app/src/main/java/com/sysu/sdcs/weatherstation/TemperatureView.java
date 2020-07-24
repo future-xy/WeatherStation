@@ -44,12 +44,12 @@ public class TemperatureView extends View {
     }
 
 
-    //设置最小值
+    //设置最小温度
     public void setMinValue(int minValue) {
         this.minValue = minValue;
     }
 
-    //设置最大值
+    //设置最大温度
     public void setMaxValue(int maxValue) {
         this.maxValue = maxValue;
     }
@@ -59,7 +59,7 @@ public class TemperatureView extends View {
         this.currentDay = currentDay;
     }
 
-    //设置目前的值
+    //设置目前的温度
     public void setCurrentValue(int currentValue) {
         this.currentValue = currentValue;
     }
@@ -87,7 +87,6 @@ public class TemperatureView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        //给一个初始长、宽
         int mDefaultWidth = 200;
         int mDefaultHeight = (int) (220 * Util.getDensity(getContext()));
         setMeasuredDimension(resolveSize(mDefaultWidth, widthMeasureSpec), resolveSize(mDefaultHeight, heightMeasureSpec));
@@ -108,7 +107,6 @@ public class TemperatureView extends View {
         drawDay(canvas);
     }
 
-    //还可以添加一堆东西，比如：天气图标，风速，，，
     //绘制日期
     private void drawDay(Canvas canvas) {
         mPaint.setTextSize(50);

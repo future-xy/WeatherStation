@@ -215,8 +215,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/sun"
                 android:paddingStart="10dp"
-                android:text="06:00"
                 android:paddingBottom="50dp"
+                android:text="06:00"
                 android:textSize="20sp" />
 
             <TextView
@@ -225,9 +225,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/sun"
                 android:layout_toEndOf="@+id/sunrise_time"
+                android:gravity="end"
                 android:paddingEnd="0dp"
                 android:paddingBottom="50dp"
-                android:gravity="end"
                 android:text="19:00"
                 android:textSize="20sp" />
 
