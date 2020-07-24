@@ -16,14 +16,14 @@ public class MD5Utils {
             StringBuffer sb = new StringBuffer();
             // result数组，digest.digest ( ); -> text.getBytes();
             // for 循环数组byte[] result;
-            for (byte b : result){
+            for (byte b : result) {
                 // 0xff 为16进制
                 int number = b & 0xff;
                 // number值 转换 字符串 Integer.toHexString( );
                 String hex = Integer.toHexString(number);
-                if (hex.length() == 1){
-                    sb.append("0"+hex);
-                }else {
+                if (hex.length() == 1) {
+                    sb.append("0" + hex);
+                } else {
                     sb.append(hex);
                 }
             }

@@ -53,5 +53,7 @@ public class Cities {
         return codes;
     }
 
-    public int getIdx(String code) { return Arrays.binarySearch(codes, code); }
+    public int getIdx(String code) {
+        return Arrays.binarySearch(codes, code);
+    }
 }

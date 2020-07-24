@@ -106,15 +106,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //MainActivity.this.deleteDatabase("dbWeather.db3");
         mainActivity = this;
-        /*
-        太丑了，感觉没必要
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setTitle("天气屋");
-        */
+
         Toolbar mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitle("天气屋");
         mToolbar.setSubtitle("测试版");
@@ -180,8 +173,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
             }
             cursor.close();
         }
-//        if (city_names.size() == 0)
-//            city_names.add(defaultCity);
         Log.d(TAG, "onCreate: " + city_names.size());
 
         //通过Spinner切换城市，测试版
@@ -202,27 +193,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         });
 
         sunriseView = findViewById(R.id.sun);
-
-//        unitTest();
-//        BottomBar bottomBar = findViewById(R.id.bottomBar);//底部导航栏的使用方法见 https://github.com/roughike/BottomBar
-//        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-//            @Override
-//            public void onTabSelected(int tabId) {
-//                switch (tabId) {
-//                    case R.id.tab_home:
-//                        Log.d("nav", "to page home");
-//                        break;
-//                    case R.id.tab_map:
-//                        Log.d("nav", "to page map");
-//                        Intent intent = new Intent(MainActivity.this, CloudGraphActivity.class);
-//                        startActivity(intent);
-//                        break;
-//                    case R.id.tab_setting:
-//                        Log.d("nav", "to page setting");
-//                        break;
-//                }
-//            }
-//        });
     }
 
     //判断是否有网络连接
@@ -245,7 +215,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED | ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "getLocation: permission");
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            //Toast.makeText(MainActivity.this, "请开启位置(GPS)权限", Toast.LENGTH_LONG).show();
             return "";
         }
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -277,7 +246,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         if (hasFocus) {
             sunriseH = sunriseView.getLayoutParams().height;
             sunriseW = sunriseView.getLayoutParams().width;
-//            getCityNames();
         }
     }
 
@@ -496,12 +464,6 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
     }
 
 
-//    void unitTest() {
-//        System.out.println("code of gz: " + cities.getCode("广州"));//TEST1
-//        //NetUtils.sendInfo("https://devapi.heweather.net/v7/weather/now?location=101010100&key=ff91402a13b144cf8ec6829df147c84f");
-//        //getWeatherInfo("CN"+cities.getCode(curCity));//TEST2
-//    }
-
     //更新15天天气
     boolean update15Days() {
         List<Integer> maxData = new ArrayList<>();
@@ -547,16 +509,7 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback 
         }
         weather1.setText(weatherL);
         ImageView weatherPic = findViewById(R.id.weatherpic);
-//        /*
-//        JUST FOR TEST!!!
-//        DELETE IT!!!
-//         */
-//        String[] testWweather = new String[]{"小雨", "中雨", "大雨", "暴雨", "阴", "多云", "晴"};
-//        Random random = new Random();
-//        weatherL = testWweather[(random.nextInt() % testWweather.length + testWweather.length) % testWweather.length];
-//        /*
-//        TEST END
-//         */
+
         switch (weatherL) {
             case "小雨":
                 weatherPic.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.w_smallrain));
